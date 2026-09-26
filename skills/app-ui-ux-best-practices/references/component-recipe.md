@@ -1,742 +1,571 @@
-# Component Recipe Reference
+# Native Component Recipe Reference
 
-Component design specification for both Convention Track and Innovation Track. Defines UI components as atomic Tailwind class strings with complete state coverage.
+This reference defines how to specify native mobile components without collapsing design intent into framework syntax.
 
-> **Hero / above-the-fold surfaces.** This file covers in-page interactive components (buttons, cards, inputs, navigation, etc.). For hero / landing / marketing-front composition, the source-of-truth recipe lives in `hero-enrichment.md` — keyed by the `theme.hero.tier` value (`0` / `A` / `B` / `C` / `D` / `E`) emitted by the design-dna sub-agent. The write-code sub-agent MUST read `hero-enrichment.md` and use the recipe sketch matching the declared tier as the starting point for the hero region. Do NOT improvise a hero from this file's button + card primitives — every tier in `hero-enrichment.md` has explicit MUST-DOs, MUST-NOTs, and anti-patterns that this file does not encode.
+A component recipe should be implementable in:
+- SwiftUI
+- UIKit
+- Jetpack Compose
+- Android Views/XML
 
----
-
-## The 8-State Interaction Model (CRITICAL)
-
-Every interactive component MUST define all 8 states. Missing states create incomplete user experiences.
-
-### 1. Default State
-
-Base appearance when idle, not being interacted with.
-
-**Requirements:**
-- Clear visual hierarchy
-- Readable at intended size
-- Sufficient contrast
-- Consistent with design tokens
-
-**Example (Primary Button):**
-```
-bg-primary text-white px-4 py-2 rounded-lg font-medium shadow-sm transition-all duration-200
-```
-
-### 2. Hover State
-
-Triggered when cursor is over element.
-
-**CRITICAL RULES:**
-- MUST increase visibility and clickability
-- Makes element MORE inviting, not less
-- Moves toward user (up or forward in z-space)
-- NO layout shift or reflow
-
-**Good Hover Patterns:**
-```
-Lift: hover:shadow-lg hover:-translate-y-0.5
-Glow: hover:ring-2 hover:ring-primary/20
-Brighten: hover:bg-primary-600 (lighter than default primary-700)
-Scale: hover:scale-[1.02] (subtle growth)
-```
-
-**Example (Primary Button Hover):**
-```
-hover:bg-primary-600 hover:shadow-md hover:-translate-y-0.5
-```
-
-### 3. Focus State
-
-Triggered when element receives keyboard focus.
-
-**REQUIREMENTS:**
-- Must have visible focus ring for accessibility (WCAG 2.4.7)
-- Use focus-visible: variant to avoid mouse focus rings
-- Minimum 2px ring width
-- Sufficient contrast (3:1 minimum)
-
-**Example (Primary Button Focus):**
-```
-focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
-```
-
-### 4. Active State
-
-Triggered when element is being pressed/clicked.
-
-**REQUIREMENTS:**
-- Tactile feedback - element should feel "pressed"
-- Brief duration (50-100ms visual feedback)
-- Obvious physical response
-
-**Good Active Patterns:**
-```
-Press down: active:scale-[0.98]
-Depress: active:translate-y-0.5
-Darken: active:bg-primary-800
-```
-
-**Example (Primary Button Active):**
-```
-active:scale-[0.98] active:translate-y-0
-```
-
-### 5. Disabled State
-
-Element is not interactive, action is unavailable.
-
-**REQUIREMENTS:**
-- Reduced opacity: 50-60%
-- Cursor change: cursor-not-allowed
-- No pointer events
-- Grayed out colors
-
-**Example (Primary Button Disabled):**
-```
-disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-none
-```
-
-### 6. Loading State
-
-Element is processing an action, user must wait.
-
-**REQUIREMENTS:**
-- Show spinner or skeleton
-- Disable interaction: pointer-events-none
-- Optional: reduce opacity or show pulse animation
-- Cursor change: cursor-wait
-
-**Example (Primary Button Loading):**
-```
-aria-busy:opacity-70 aria-busy:cursor-wait aria-busy:pointer-events-none
-```
-
-**Visual Pattern:**
-Replace button text with spinner, or show spinner alongside text.
-
-### 7. Error State
-
-Element or its input has validation error.
-
-**REQUIREMENTS:**
-- Error border color: border-error (typically red)
-- Error text color if text present
-- Optional: red ring or glow for emphasis
-- Clear visual distinction from default
-
-**Example (Input Field Error):**
-```
-aria-invalid:border-error aria-invalid:ring-error/20 aria-invalid:ring-2
-```
-
-### 8. Success State
-
-Action completed successfully or input is valid.
-
-**REQUIREMENTS:**
-- Success border or background color (typically green)
-- Optional: green ring or checkmark icon
-- Temporary state (may auto-dismiss after 2-3s)
-
-**Example (Input Field Success):**
-```
-data-[valid=true]:border-success data-[valid=true]:ring-success/20
-```
+The design spec describes role, anatomy, behavior, states, accessibility, motion, and platform mapping. Code-level APIs are secondary.
 
 ---
 
-## Hover Anti-Patterns (BANNED)
+# 1. Native State Model
 
-These patterns trigger "bad UX" detection from YC Design Review. All are prohibited.
+The old web-oriented 8-state model is replaced with a touch-first native state model.
 
-### 1. Sibling Fade-Out (Context-Dependent)
+## Core states
 
-**Description:** Hovering over one item dims all other items.
+Every interactive component should account for the states that actually apply:
 
-**When Banned:** In standard SaaS/utility apps, it reduces readability of other options and feels like punishment.
-**When Allowed (EXEMPT):** In creative portfolios, editorial layouts, or high-end marketing pages, this is a valid technique to create intense focus on the hovered element.
+1. **Default**
+2. **Pressed / Active**
+3. **Focused** — keyboard/pointer/accessibility focus where relevant
+4. **Selected / Checked**
+5. **Disabled**
+6. **Loading / In progress**
+7. **Error**
+8. **Success / Completed**
 
-**Bad Code (for SaaS):**
-```css
-.group:hover .item:not(:hover) { opacity: 0.5; }
-```
+Optional states:
+- Hover — pointer environments only
+- Long-press / context menu
+- Dragging / reordering
+- Expanded / collapsed
+- Indeterminate
+- Read-only
+- Offline / unavailable
 
-**Fix:** Only modify the hovered element, never affect siblings.
-
-### 2. Wrong-Direction Movement (BANNED)
-
-**Description:** Hover moves element down or away from cursor.
-
-**Why Banned:** Cursor can lose tracking, feels unresponsive.
-
-**Bad Code:**
-```
-hover:translate-y-1  /* moves down - WRONG */
-```
-
-**Fix:** Move toward user (up or forward).
-```
-hover:-translate-y-0.5  /* moves up - CORRECT */
-```
-
-### 3. Layout Shift (Context-Dependent)
-
-**Description:** Hover changes dimensions causing reflow.
-
-**When Banned:** In standard UI components (buttons, nav), causing adjacent elements to shift is disorienting.
-**When Allowed (EXEMPT):** In creative/editorial designs, intentional layout shifts (e.g., expanding accordion cards, physical "squish" effects) can add a tactile, playful feel.
-
-**Bad Code (for standard UI):**
-```
-hover:p-6  /* changes from p-4, shifts layout */
-```
-
-**Fix:** Use transform instead of changing padding/margin.
-```
-hover:scale-[1.02]  /* no layout shift */
-```
-
-### Correct Hover Behavior Summary
-
-- Makes element MORE visible, not less
-- Moves toward user (up, forward in z-space)
-- No layout shift (use transform, not margin/padding changes)
-- Provides clear affordance for interaction
-- Increases perceived clickability
+Do not manufacture every state for every control. A static label does not need loading/selected states; a button does not need an error state if errors are presented at the task level.
 
 ---
 
-## Required Components
+# 2. Press Feedback Is Mandatory for Custom Controls
 
-Provide Tailwind class specifications for these 6 core components with all 8 states.
+A custom tappable control must feel responsive.
 
-### 1. Container/Card
+Possible feedback:
+- subtle scale or shape response
+- tint/opacity change
+- tonal change
+- elevation/depth change
+- highlight/state layer
+- haptic when meaningful
 
-Base structural element for grouping content.
+Rules:
+- feedback begins immediately with touch-down where practical
+- feedback must not shift layout
+- the control returns cleanly when the gesture cancels
+- do not make every press bounce
+- preserve the platform's normal behavior when using standard controls
 
-**Purpose:** Content grouping, visual separation, hierarchy
-
-**States to Define:**
-- Default: base appearance
-- Hover: optional (if clickable)
-- Focus: if interactive
-- Active: if clickable
-- Disabled: if conditional rendering
-- Loading: if content loads dynamically
-- Error: if validation applies
-- Success: if validation applies
-
-**Example Specification:**
-
-```
-CONTAINER/CARD:
-Default: bg-surface border border-border rounded-lg p-6 shadow-sm
-Hover: hover:shadow-md hover:border-border/80 (if clickable)
-Focus: focus-visible:ring-2 focus-visible:ring-primary (if interactive)
-Active: active:scale-[0.99] (if clickable)
-Disabled: opacity-60 pointer-events-none
-Loading: animate-pulse
-Error: border-error ring-1 ring-error/20
-Success: border-success ring-1 ring-success/20
-```
-
-### 2. Primary Button
-
-Main call-to-action button.
-
-**Purpose:** Primary user action, highest visual weight
-
-**Requirements:**
-- Must use primary accent color
-- Must have all 8 states defined
-- Must provide tactile feedback (active state)
-- Must be keyboard accessible
-
-**Example Specification:**
-
-```
-PRIMARY_BUTTON:
-Default: bg-primary text-white px-4 py-2 rounded-lg font-medium shadow-sm transition-all duration-200
-Hover: hover:bg-primary-600 hover:shadow-md hover:-translate-y-0.5
-Focus: focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
-Active: active:scale-[0.98] active:translate-y-0
-Disabled: disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-none
-Loading: aria-busy:opacity-70 aria-busy:cursor-wait aria-busy:pointer-events-none
-Error: data-[error=true]:bg-error data-[error=true]:ring-error/20
-Success: data-[success=true]:bg-success data-[success=true]:ring-success/20
-```
-
-### 3. Secondary Button
-
-Alternative action button, lower hierarchy than primary.
-
-**Purpose:** Secondary user action, supporting actions
-
-**Requirements:**
-- Must be visually distinct from primary (outline or ghost style)
-- Must have all 8 states defined
-- Must provide tactile feedback
-- Should not compete with primary button
-
-**Example Specification:**
-
-```
-SECONDARY_BUTTON:
-Default: bg-transparent border border-border text-text-primary px-4 py-2 rounded-lg font-medium transition-all duration-200
-Hover: hover:bg-surface hover:border-border/80 hover:-translate-y-0.5
-Focus: focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
-Active: active:scale-[0.98] active:translate-y-0
-Disabled: disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0
-Loading: aria-busy:opacity-70 aria-busy:cursor-wait aria-busy:pointer-events-none
-Error: data-[error=true]:border-error data-[error=true]:text-error
-Success: data-[success=true]:border-success data-[success=true]:text-success
-```
-
-### 4. Input Field
-
-Text input element for user data entry.
-
-**Purpose:** Text input, form fields
-
-**Requirements:**
-- Clear visual boundary (border)
-- Sufficient internal padding
-- All 8 states (especially error/success for validation)
-- Placeholder text support
-- Label association
-
-**Example Specification:**
-
-```
-INPUT_FIELD:
-Default: w-full px-3 py-2 border border-border rounded-lg bg-background text-text-primary placeholder:text-text-disabled transition-colors duration-200
-Hover: hover:border-border/80
-Focus: focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary
-Active: (same as focus)
-Disabled: disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface/50
-Loading: aria-busy:opacity-70 aria-busy:cursor-wait
-Error: aria-invalid:border-error aria-invalid:ring-2 aria-invalid:ring-error/20 aria-invalid:focus:ring-error
-Success: data-[valid=true]:border-success data-[valid=true]:ring-1 data-[valid=true]:ring-success/20
-```
-
-### 5. Navigation Item
-
-Sidebar or top navigation link/button.
-
-**Purpose:** Navigation between sections or pages
-
-**Requirements:**
-- Clear active/current state distinction
-- Hover feedback
-- Keyboard accessible
-- Icon + text support
-
-**Example Specification:**
-
-```
-NAVIGATION_ITEM:
-Default: flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary transition-colors duration-200
-Hover: hover:bg-surface hover:text-text-primary
-Focus: focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1
-Active: aria-current:bg-primary/10 aria-current:text-primary aria-current:font-medium
-Disabled: disabled:opacity-50 disabled:cursor-not-allowed
-Loading: (typically N/A)
-Error: (typically N/A)
-Success: (typically N/A)
-```
-
-### 6. Badge/Tag
-
-Small label or status indicator.
-
-**Purpose:** Status labels, categories, metadata
-
-**Requirements:**
-- Compact size (small text, tight padding)
-- Optional dismissible (if interactive)
-- Color-coded for status
-- May be static (non-interactive)
-
-**Example Specification:**
-
-```
-BADGE/TAG:
-Default: inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface text-text-secondary text-xs font-medium border border-border
-Hover: hover:bg-surface/80 (if interactive)
-Focus: focus-visible:ring-2 focus-visible:ring-primary (if interactive)
-Active: active:scale-95 (if interactive)
-Disabled: disabled:opacity-50
-Loading: (typically N/A)
-Error: bg-error/10 text-error border-error/20
-Success: bg-success/10 text-success border-success/20
-```
+iOS system buttons and Android Material controls already provide useful behavior; do not layer gratuitous effects over them.
 
 ---
 
-## Layout Pattern Library
+# 3. Touch Targets
 
-In-page section composition. Pick the pattern that fits the content and the direction's Layout Vibe — do NOT default every section to a centered single-column stack, and do NOT force complexity either. The point is that across different products the chosen pattern should **vary**.
+## iOS / iPadOS
+Ordinary touch controls should generally provide a hit region around 44×44 pt even when the visible glyph is smaller.
 
-| Pattern | Shape | Use for | Mobile note |
-|---|---|---|---|
-| **Bento Grid** | Irregular grid, mixed-size cells | Dashboards, overviews, feature matrices | Allowed as a natural 2-col card/room grid; do NOT force asymmetric bento on narrow viewports |
-| **Asymmetric Split** | Unequal columns (60/40, 70/30) | Editorial, feature + detail | Desktop/tablet; on phone collapse to stacked order |
-| **Full-Screen Segments** | Section-based, each screen = one message | Marketing, onboarding, storytelling | Works on mobile as vertical full-bleed segments |
-| **Sidebar Narrative** | Fixed rail + scrolling main | Docs, settings, desktop tools | On mobile becomes a drawer or a Hub tile-grid |
-| **Overlap / Layer** | Intentionally overlapping elements for depth | Hero, brand surfaces, immersive | Use sparingly on mobile; keep tap targets clear |
-| **List + Detail** | Master list → pushed detail | Browsing, inbox, catalog (pairs with the Stack shell) | Canonical mobile drill-in |
-| **Hub Tile-Grid** | Entry tiles launching sub-flows | Launcher/home of multi-feature apps (pairs with the Hub shell) | 2-col tile grid + safe area |
+## Android
+Interactive touch targets should be at least 48×48 dp.
 
-Respect the Mobile Exemption: pure single-column stacks are natural on phone — elevate them with typography and vertical rhythm rather than forcing bento/asymmetry.
+The hit region can exceed the visible bounds.
 
----
+Never reduce touch targets because:
+- the layout is dense
+- the icon is visually small
+- the reference screenshot looks tighter
+- the card grid needs to fit one more item
 
-## Convention Track Approach
-
-Study the reference product you selected from the candidate pool (Notion / Spotify / Arc / Things 3 / Figma / Airbnb / Linear / Stripe / Vercel / Apple HIG / Material 3 / etc. — any one of, chosen on fit, not on which name appears first) and replicate its component patterns faithfully.
-
-### What to Replicate
-
-**Visual Properties:**
-- Border radius values (subtle rounded vs. pronounced rounded)
-- Shadow depth and layering
-- Color usage patterns (where primary appears, how surface differs from background)
-- Spacing internal to components
-- Typography hierarchy within components
-
-**Interaction Properties:**
-- Hover states (lift, glow, color shift)
-- Focus ring style and color
-- Active state feedback
-- Transition durations and easing
-
-**State Patterns:**
-- How disabled states are indicated
-- Loading state implementation
-- Error/success feedback patterns
-
-### Goal
-
-Consistency with established system, not originality. Users chose Convention Track because they want proven patterns.
-
-### Process
-
-1. Capture screenshots of reference system components in all states
-2. Inspect with browser DevTools to extract exact values
-3. Translate to Tailwind classes
-4. Test all 8 states match reference behavior
-5. Document deviations (if any) with rationale
+Spacing and grouping should adapt around accessible targets.
 
 ---
 
-## Innovation Track Approach
+# 4. Platform Primitive First
 
-Use aesthetic judgment to TRANSLATE Feeling Keywords and Material Metaphor into visual code.
+Before inventing a custom component, identify the closest native primitive.
 
-### The Translation Challenge
+## iOS examples
+- Button
+- Toggle/Switch
+- Text Field
+- Search Field
+- Picker
+- Menu
+- Context Menu
+- List
+- Navigation Stack
+- Tab Bar
+- Toolbar
+- Sheet
+- Alert
+- Confirmation Dialog
+- Progress
+- Date/Time Picker
+- Share/Activity surface
 
-Creative interpretation required:
-- How does "Quietness" affect shadow weight and border presence?
-- How does "Liquid Metal" dictate background colors and ring utilities?
-- How does "Playfulness" change rounded corners and hover animations?
-- How does "Precision" influence spacing and alignment?
-- How does "Distortion" translate into overprint offsets, clip-paths, and transition-none?
+Implementation may be SwiftUI or UIKit.
 
-### Translation Examples
+## Android examples
+- Button / Icon Button
+- Switch / Checkbox / Radio
+- Text Field
+- Search
+- Menu
+- List item
+- Navigation bar / rail / drawer
+- Top app bar
+- FAB
+- Bottom sheet
+- Dialog
+- Snackbar
+- Progress
+- Date/Time picker
 
-**Feeling: "Quietness" + Material: "Soft Fabric"**
-- High rounded corners (rounded-xl or rounded-2xl)
-- Minimal borders or no borders (rely on subtle shadows)
-- Soft, diffused shadows (shadow-sm with high blur)
-- Muted color saturation
-- Generous padding (p-6, p-8)
+Implementation may be Compose or Views/XML.
 
-**Feeling: "Precision" + Material: "Machined Metal"**
-- Sharp corners (rounded-sm or rounded-none)
-- Crisp 1px borders (border border-border)
-- Tight, controlled shadows (shadow-sm with low blur)
-- High contrast colors
-- Compact padding (p-3, p-4)
+### Customization rule
 
-**Feeling: "Playfulness" + Material: "Bouncy Gel"**
-- Varied border radius (rounded-lg to rounded-2xl, mix for variety)
-- Bright, saturated colors
-- Multi-layer shadows (shadow-md with colored tint)
-- Active state with scale transform (active:scale-95)
-- Comfortable padding with rhythm (p-4, p-6)
+Customize the native primitive if you need visual identity but its behavior is already correct.
 
-**Feeling: "Distortion" + Material: "Xeroxed Paper"**
-- No rounding (rounded-none), irregular clip-path edges on feature cards
-- Hard black borders (border-2 border-black) and offset solid shadows (shadow-[4px_4px_0_#000])
-- Halftone/noise overlay at visible opacity (15-25%), misregistered duplicate text layers
-- Instant state changes (transition-none or duration-75 linear)
-- Tight, colliding padding with deliberate 1-3deg rotations on a rigid grid
+Create a custom control when:
+- the domain interaction has no suitable native primitive
+- the control's behavior is genuinely product-specific
+- brand expression materially benefits from a custom form
 
-### Material-Specific Patterns
-
-**Glass Material:**
-```
-Container: backdrop-blur-sm bg-white/10 border border-white/20 shadow-lg
-Button: backdrop-blur-md bg-white/20 border border-white/30 hover:bg-white/30
-```
-
-**Paper Material:**
-```
-Container: bg-surface shadow-sm rounded-lg border-0
-Button: bg-primary text-white shadow-md hover:shadow-lg rounded-md
-```
-
-**Liquid Metal Material:**
-```
-Container: bg-gradient-to-br from-gray-800 to-gray-900 shadow-2xl rounded-xl
-Button: bg-gradient-to-r from-primary to-primary-600 hover:from-primary-600
-```
-
-**Fabric Material:**
-```
-Container: bg-surface rounded-2xl shadow-sm border-0 p-8
-Button: bg-primary text-white rounded-full px-6 py-3 shadow-md hover:shadow-lg
-```
-
-**Neo-brutalism Material (Modern Genre):**
-```
-Container: bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none
-Button: bg-primary text-black font-bold border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-[4px] active:translate-x-[4px] active:shadow-none transition-all
-```
-
-**Spatial UI / Advanced Glass (Modern Genre):**
-```
-Container: bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] ring-1 ring-white/10 inset-0
-Button: bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] text-white transition-all
-```
-
-**Gig Poster / Zine Collage (Loud-Raw Register):**
-```
-Container: bg-[#F2EFE6] border-2 border-black rounded-none rotate-[-1deg] shadow-[6px_6px_0_#000] relative overflow-visible
-Button: bg-black text-[#F2EFE6] font-black uppercase tracking-tight border-2 border-black rounded-none px-5 py-2 hover:bg-primary hover:text-black active:translate-x-[2px] active:translate-y-[2px] transition-none
-Accent: duplicated headline layer with translate-x-[3px] translate-y-[2px] text-primary mix-blend-multiply (misregistered overprint); halftone-dot SVG overlay at 15-20% opacity
-Note: rotations sit on a rigid underlying grid; tap targets stay >= 44px and clear of overlaps
-```
-
-**Industrial / Utilitarian Hard Surface (Heavy Register):**
-```
-Container: bg-[#1C1E1F] border border-[#3A3D3E] rounded-sm shadow-none
-Button: bg-[#2A2D2E] text-[#E8E6E0] font-mono uppercase text-sm border border-[#4A4D4E] rounded-sm px-4 py-2 hover:bg-[#3A3D3E] hover:border-[#6A6D6E] active:bg-[#232526] transition-colors duration-100
-Accent: safety-stripe or stencil label details; hard 1px dividers; zero blur, zero gradient
-```
-
-**Toy / Playful Chunky (Playful Register):**
-```
-Container: bg-white rounded-3xl border-4 border-[#2B2B2B] shadow-[0_6px_0_#2B2B2B]
-Button: bg-primary text-white font-extrabold rounded-full px-6 py-3 border-4 border-[#2B2B2B] shadow-[0_5px_0_#2B2B2B] hover:-translate-y-[2px] hover:shadow-[0_7px_0_#2B2B2B] active:translate-y-[3px] active:shadow-[0_2px_0_#2B2B2B] transition-all duration-150
-Note: spring overshoot on entrances (low damping) is deliberate here, not a violation
-```
-
-**Luxury Serif Editorial (Quiet-Polished Register):**
-```
-Container: bg-[#FBFAF7] rounded-none border-0 shadow-none px-12 py-16
-Button: bg-transparent text-[#1A1A18] font-serif tracking-[0.08em] uppercase text-sm border-b border-[#1A1A18] rounded-none px-0 py-2 hover:opacity-60 transition-opacity duration-300
-Accent: hairline 1px rules, extreme whitespace, high-contrast serif display with tight optical kerning
-```
-
-These genre recipes are calibration anchors keyed to register dials, not a menu — interpolate or derive new ones from the declared register and material metaphor.
-
-### 3D / WebGL Component Recipe (APP high-value components)
-
-Three.js is allowed for high-value components when CSS cannot credibly express the interaction. Use it for real geometry, perspective, reflection, inertia, or 3D rotation: rotating play buttons, vinyl discs, album sleeves, knobs, capsule switches, sculptural CTAs, or media controls that define the product feel.
-
-**Use CSS/Tailwind instead when:**
-- The effect is only lift, press, mild tilt, blur, glass, bevel, or shadow.
-- The component is routine UI: settings rows, standard form fields, ordinary navigation, secondary buttons.
-
-**Use Three.js / React Three Fiber when:**
-- The control needs real geometry or material response, not a flat transform.
-- The 3D motion is part of the product's signature interaction.
-- The component remains understandable without the canvas.
-
-**Required implementation contract:**
-- Keep a real semantic DOM control (`button`, `input`, or equivalent) for keyboard activation, focus, labels, and screen readers.
-- The canvas must be decorative or enhancement-layered over/under the DOM control; it cannot be the only accessible button.
-- Provide a canvas fallback: if WebGL fails or the package is unavailable, render the same control as a token-styled DOM component.
-- Support `prefers-reduced-motion`: disable continuous rotation, reduce inertia, and keep a static material frame.
-- Touch target remains at least 44x44px, and focus-visible state remains obvious.
+When custom, you inherit responsibility for:
+- touch behavior
+- accessibility semantics
+- focus
+- text scaling
+- disabled state
+- selected state
+- gestures
+- keyboard/pointer support where relevant
+- reduced motion
+- localization
 
 ---
 
-## Accessibility Requirements
+# 5. Component Specification Format
 
-All interactive components must meet WCAG 2.1 AA standards minimum.
+For every major component, document:
 
-### Keyboard Navigation
+## [Component name]
 
-**Requirements:**
-- Focusable with Tab key
-- Activatable with Enter or Space
-- Visible focus indicators (focus-visible: ring)
-- Logical tab order
+**Purpose**
+- What task does it support?
+- Is it primary, secondary, or contextual?
 
-**Implementation:**
-- Use semantic HTML (button, a, input)
-- Add tabindex="0" only when necessary
-- Never use tabindex > 0
-- Provide keyboard shortcuts for power users (optional)
+**Platform primitive**
+- iOS:
+- Android:
 
-### Screen Readers
+**Anatomy**
+- container
+- leading content
+- primary label
+- secondary label
+- accessory
+- status
+- affordance
 
-**Requirements:**
-- Proper ARIA labels and roles
-- State announcements (aria-busy, aria-invalid, aria-current)
-- Semantic HTML when possible
-- Descriptive text for icon-only buttons
+**Geometry**
+- visible size
+- minimum hit region
+- internal spacing
+- alignment
+- radius/shape
+- separator/stroke
 
-**Implementation:**
-```html
-<button aria-label="Close dialog" aria-busy="false">
-<input aria-invalid="true" aria-describedby="error-message">
-<nav aria-current="page">
-```
+**Content rules**
+- label length
+- truncation/wrapping
+- optional vs required elements
+- localization expansion
+- empty/null behavior
 
-### Touch Targets
+**States**
+- default
+- pressed
+- focused
+- selected
+- disabled
+- loading
+- error
+- success
+- optional pointer/gesture states
 
-**Requirements:**
-- Minimum 44x44px touch target size (WCAG 2.5.5)
-- Adequate spacing between interactive elements (8px minimum)
-- Larger targets for primary actions
+**Accessibility**
+- semantic role
+- accessible label
+- value/state announcement
+- order/grouping
+- custom actions
+- gesture alternative
+- large-text behavior
 
-**Implementation:**
-```
-min-h-[44px] min-w-[44px]  // minimum touch target
-p-3  // 12px padding typically achieves 44px with content
-gap-2  // 8px spacing between touch targets
-```
+**Motion + haptics**
+- feedback purpose
+- perceived motion
+- reduced-motion behavior
+- haptic role if any
 
-### Color Contrast
+**Platform differences**
+- iOS behavior
+- Android behavior
 
-**Requirements:**
-- Text meets WCAG AA standards
-  - Body text: 4.5:1 minimum
-  - Large text (18pt+ or 14pt bold): 3:1 minimum
-- UI components: 3:1 minimum
-- Don't rely on color alone for state indication
-
-**Implementation:**
-- Use contrast checker tools
-- Test with grayscale filter
-- Add icons or text labels alongside color indicators
-- Provide alternative cues (borders, icons, text)
-
----
-
-## Component Specification Format
-
-For each component, provide all 8 states:
-
-```
-COMPONENT_NAME:
-Default: [tailwind classes]
-Hover: [tailwind classes for hover state]
-Focus: [tailwind classes for focus-visible state]
-Active: [tailwind classes for active state]
-Disabled: [tailwind classes for disabled state]
-Loading: [tailwind classes for loading state]
-Error: [tailwind classes for error state]
-Success: [tailwind classes for success state]
-```
-
-### Complete Example: Primary Button
-
-```
-PRIMARY_BUTTON:
-Default: bg-primary text-white px-4 py-2.5 rounded-lg font-medium shadow-sm transition-all duration-200 min-h-[44px]
-Hover: hover:bg-primary-600 hover:shadow-md hover:-translate-y-0.5
-Focus: focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
-Active: active:scale-[0.98] active:translate-y-0 active:shadow-sm
-Disabled: disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-none
-Loading: aria-busy:opacity-70 aria-busy:cursor-wait aria-busy:pointer-events-none
-Error: data-[error=true]:bg-error data-[error=true]:hover:bg-error/90
-Success: data-[success=true]:bg-success data-[success=true]:hover:bg-success/90
-```
+**Custom-treatment justification**
+- why the standard primitive is insufficient, if custom
 
 ---
 
-## Responsive Considerations
+# 6. Buttons
 
-Components must adapt to different screen sizes.
+## Primary action
 
-### Mobile Adaptations
+Use for the most important action in the current view or task.
 
-**Buttons:**
-```
-Mobile: px-4 py-3 text-base  // larger touch targets
-Desktop: px-4 py-2 text-sm  // more compact
-```
+Rules:
+- one visually dominant primary action per decision cluster
+- label the outcome clearly
+- preserve enough hit area
+- pressed feedback is immediate
+- loading state prevents accidental duplicate submission when appropriate
+- destructive primary actions must be unmistakable
 
-**Input Fields:**
-```
-Mobile: text-base  // prevents zoom on iOS
-Desktop: text-sm
-```
+Avoid:
+- giant full-width buttons for every minor action
+- multiple equal "primary" buttons competing in one group
+- icon-only primary actions when the meaning is not obvious
 
-**Navigation Items:**
-```
-Mobile: py-3 text-base  // easier tapping
-Desktop: py-2 text-sm
-```
+## Secondary action
 
-### Tailwind Responsive Classes
+Secondary does not mean low contrast to the point of invisibility.
 
-```
-// Mobile-first approach
-px-4 py-3 text-base  // default (mobile)
-md:px-4 md:py-2 md:text-sm  // desktop override
-```
+Possible treatments:
+- text button
+- bordered/tonal button
+- toolbar action
+- inline action
 
----
+Use platform hierarchy rather than forcing the same button family on both systems.
 
-## Output Format
+## Icon button
 
-Provide complete component specifications for all 6 required components with all 8 states each. Format as plain text blocks for easy copy/paste.
+Requirements:
+- accessible name
+- adequate hit target
+- clear selected state if toggleable
+- badge/state not communicated only by color
 
-```
-CONTAINER/CARD:
-[8-state specification]
-
-PRIMARY_BUTTON:
-[8-state specification]
-
-SECONDARY_BUTTON:
-[8-state specification]
-
-INPUT_FIELD:
-[8-state specification]
-
-NAVIGATION_ITEM:
-[8-state specification]
-
-BADGE/TAG:
-[8-state specification]
-```
-
-Pass this specification to the motion-system skill for animation and transition definitions.
+A 20–24 pt/dp glyph can live inside a 44/48 hit region.
 
 ---
 
-## Quality Checklist
+# 7. Inputs
 
-Before finalizing component specifications:
+## Text field
 
-- [ ] All 6 required components specified
-- [ ] All 8 states defined for each interactive component
-- [ ] No hover anti-patterns (sibling fade-out, wrong-direction, layout shift)
-- [ ] Focus indicators present and visible (WCAG 2.4.7)
-- [ ] Touch targets minimum 44x44px (WCAG 2.5.5)
-- [ ] Color contrast meets WCAG AA (4.5:1 for text, 3:1 for UI)
-- [ ] Disabled state clearly distinguished
-- [ ] Loading state prevents interaction
-- [ ] Error/success states provide clear feedback
-- [ ] Tailwind classes valid and conflict-free
-- [ ] Convention Track: matches reference system patterns
-- [ ] Innovation Track: aligns with Material Metaphor and Feeling Keywords
+Specify:
+- label strategy
+- placeholder role
+- keyboard/input type
+- clear action if needed
+- validation timing
+- error presentation
+- helper text
+- secure-entry behavior if relevant
+- multiline behavior
+- text scaling
+- keyboard avoidance
+
+Do not use placeholder text as the only persistent label for important forms.
+
+Validation:
+- avoid showing an error before the user has had a meaningful chance to complete input
+- error messages explain what happened and how to fix it
+- do not communicate error with red outline alone
+
+## Search
+
+Search is navigation/content retrieval, not merely a styled text field.
+
+Specify:
+- where search lives
+- when it becomes active
+- cancellation/dismissal
+- recent/suggested queries
+- empty results
+- loading
+- keyboard behavior
+- scope/filter behavior
+
+Use platform search conventions where possible.
+
+---
+
+# 8. Selection Controls
+
+Use familiar controls for familiar choices.
+
+- Switch: immediate on/off setting
+- Checkbox: independent selection, common on Android and multi-select contexts
+- Radio/single-choice list: one of several options
+- Segmented control / tabs: a small set of peer modes, not arbitrary navigation
+- Picker/menu: compact selection when scanning all choices is not essential
+
+Do not use a switch for an action that happens once.
+Do not use a checkbox for navigation.
+
+---
+
+# 9. Lists and Rows
+
+Rows should make hierarchy clear through alignment, typography, and accessories.
+
+Possible anatomy:
+- leading icon/image/avatar
+- title
+- subtitle
+- metadata
+- status
+- trailing value
+- disclosure/chevron
+- toggle/action
+
+Rules:
+- the whole row may be tappable if it opens one destination
+- avoid placing several competing hit targets in a cramped row
+- destructive swipe actions need discoverable alternatives when important
+- reorder affordances should be clear
+- support large text without clipped essential information
+
+Do not put every row inside an individual floating card by default.
+
+---
+
+# 10. Cards and Containers
+
+A card is not a universal grouping primitive.
+
+Use a container when it provides:
+- semantic grouping
+- action boundary
+- media object
+- selectable object
+- meaningful depth/containment
+
+Avoid:
+- card inside card inside card
+- every section as a rounded rectangle
+- shadows used only to make a flat hierarchy look "designed"
+
+A native list, grouped section, plain spacing, or divider may be better.
+
+---
+
+# 11. Navigation Components
+
+## Bottom navigation / Tab bar
+Use for peer top-level destinations.
+
+Do not:
+- put actions such as "Create" into destination navigation unless the product model truly treats it as a persistent mode
+- exceed the pattern's reasonable number of destinations just to avoid another navigation layer
+- invent labels/icons whose meaning is unclear
+
+## Navigation stack
+Use for hierarchical drill-down.
+
+Back behavior must match platform expectations.
+
+## Sidebar / rail
+Use larger screens to improve reach and preserve context.
+
+## Sheets
+Use for focused tasks, supplementary content, or temporary workflows.
+
+Do not use a sheet for every detail view.
+
+## Dialogs / alerts
+Reserve for decisions that deserve interruption.
+
+Avoid turning ordinary editing into a chain of dialogs.
+
+---
+
+# 12. Menus and Context Actions
+
+Menus are good for:
+- secondary actions
+- contextual operations
+- infrequent commands
+
+Do not hide the only path to a frequent action in an overflow menu.
+
+Long press can expose a context menu, but critical actions need a discoverable non-gesture route.
+
+---
+
+# 13. Loading, Progress, Empty, Error, Offline
+
+These are component states, not afterthoughts.
+
+## Loading
+Choose based on certainty:
+- indeterminate progress when duration is unknown
+- determinate progress when meaningful progress exists
+- skeletons only when they help preserve layout understanding
+
+Avoid decorative looping loaders that add anxiety without information.
+
+## Empty
+Explain:
+- what is empty
+- why it matters
+- what action fills it, when appropriate
+
+## Error
+Explain:
+- what failed
+- impact
+- recovery action
+
+## Offline
+Clarify:
+- what remains available
+- what cannot sync/load
+- whether work is queued
+- how to retry
+
+---
+
+# 14. Destructive Actions
+
+Destructive actions should have:
+- explicit wording
+- clear consequence
+- appropriate visual role
+- undo when practical
+- confirmation when consequences are difficult to reverse
+
+Avoid confirmation dialogs for trivial reversible actions; excessive confirmation trains users to ignore them.
+
+---
+
+# 15. Gestures
+
+Prefer familiar gestures:
+- tap
+- swipe
+- drag
+- long press
+- pinch/zoom where appropriate
+
+Rules:
+- do not repurpose a standard gesture for a surprising unrelated action
+- feedback should track the gesture where possible
+- gesture-only critical actions need visible alternatives
+- edge gestures must not fight system navigation
+- drag/reorder must expose state and destination clearly
+
+---
+
+# 16. Pointer and Keyboard
+
+Native mobile may still encounter:
+- iPad pointer/trackpad
+- hardware keyboard
+- Android tablets/foldables
+- desktop windowing
+- accessibility switches
+
+Therefore:
+- focused state matters when keyboard navigation exists
+- hover is optional and input-specific
+- pointer affordances can enhance precision but must not replace touch behavior
+- shortcut design should not remove visible routes for core actions
+
+---
+
+# 17. Platform-Specific Behavior Without Visual Fragmentation
+
+A shared product can use different native controls without becoming two different brands.
+
+Example:
+
+**Preference row**
+
+Shared intent:
+- title + optional supporting text
+- current state
+- entire row readable at large text sizes
+- 44/48-sized touch area
+- screen reader announces label and state
+
+iOS:
+- use a native switch pattern appropriate to Settings-style interaction
+
+Android:
+- use a Material switch/list-item pattern with Android spacing and state treatment
+
+Do not force one platform's switch geometry onto the other.
+
+---
+
+# 18. Accessibility Checklist Per Component
+
+Before approving a custom component:
+
+- [ ] Semantic role is clear
+- [ ] Accessible label is meaningful
+- [ ] State/value is announced
+- [ ] Touch target is sufficient
+- [ ] Large text does not clip essential content
+- [ ] Contrast is sufficient
+- [ ] Color is not the only state cue
+- [ ] Gesture has an alternative if critical
+- [ ] Focus order is sensible
+- [ ] Decorative elements do not create screen-reader noise
+- [ ] Loading/progress is announced when meaningful
+- [ ] Reduced-motion behavior exists if the component moves substantially
+
+---
+
+# 19. Anti-Patterns
+
+Reject these:
+
+- mandatory hover styling for touch-only UI
+- Tailwind/CSS strings as the component specification
+- web focus-ring rules copied verbatim into native designs
+- custom switches that do not expose state semantics
+- tiny icon buttons with tiny hit regions
+- all content wrapped in cards
+- custom tab bars created only to look novel
+- gestures with no discoverable alternative
+- disabled controls whose label becomes unreadable
+- spinner inside every button regardless of task
+- destructive actions represented by ambiguous icons only
+- iOS controls copied directly into Android or vice versa
+- custom components that imitate screenshots but lose native behavior
+
+---
+
+# 20. Quality Test
+
+A component recipe passes when:
+
+1. A designer can explain why the component exists.
+2. A user can predict what it does.
+3. The component has the states it actually needs.
+4. It remains usable with large text and assistive technology.
+5. It fits the chosen product register.
+6. It respects platform behavior.
+7. A developer can map it to SwiftUI/UIKit/Compose/Views without guessing the interaction model.
+8. Custom styling adds value beyond merely proving that the UI is custom.

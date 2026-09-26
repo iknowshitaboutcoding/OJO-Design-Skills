@@ -1,170 +1,224 @@
 <div align="center">
 
-# OJO Design Skills
+# OJO Native Design Skills
 
-**Reusable UI/UX design skills for AI coding agents — Codex, Claude Code, ZCode, and more.**
+**A native-mobile UI/UX design skill for AI coding agents — adapted from OJO Design Skills for iOS/iPadOS and Android.**
 
-[![License: MIT](https://img.shields.io/github/license/touchine-ojo/OJO-Design-Skills?color=blue)](./LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/touchine-ojo/OJO-Design-Skills?style=flat&color=yellow)](https://github.com/touchine-ojo/OJO-Design-Skills/stargazers)
-[![Last commit](https://img.shields.io/github/last-commit/touchine-ojo/OJO-Design-Skills?color=brightgreen)](https://github.com/touchine-ojo/OJO-Design-Skills/commits/main)
-[![Clients](https://img.shields.io/badge/clients-7-success)](#quick-start)
-[![Skills](https://img.shields.io/badge/skills-1-orange)](#skills)
-
-**English** · [简体中文](./docs/README.zh-CN.md) · [日本語](./docs/README.ja-JP.md) · [한국어](./docs/README.ko-KR.md) · [Español](./docs/README.es-ES.md)
+Native targets: **SwiftUI · UIKit · Jetpack Compose · Android Views/XML**
 
 </div>
 
 ---
 
-OJO Design Skills is a drop-in skill bundle that teaches your AI coding agent how to make real design decisions — not generic "AI-looking" layouts. Install once, and your agent gains a complete UI/UX methodology: brand-driven visual direction, design tokens, component recipes, motion specs, and a strict anti-pattern guardrail that keeps output from looking like slop.
+This fork adapts the original [OJO Design Skills](https://github.com/touchine-ojo/OJO-Design-Skills) methodology for **native app design only**.
 
-It is agent-agnostic and ships with a single installer that targets every major client.
+It keeps OJO's strongest design ideas:
+
+- product-register derivation
+- Convention vs Innovation tracks
+- anti-AI-slop guardrails
+- brand-driven visual direction
+- Material Metaphor
+- semantic design tokens
+- motion purpose
+- design audit
+
+and removes or replaces web-specific assumptions such as:
+
+- Tailwind/CSS as the design output
+- DOM/ARIA as accessibility rules
+- mandatory hover states
+- browser breakpoints
+- web font-provider requirements
+- React/component-library assumptions
+- browser/GPU animation recipes
+- website-style hero defaults
+
+The skill is intentionally **design-first and framework-agnostic**. SwiftUI/UIKit and Compose/Views are implementation targets, not separate visual systems.
+
+## Design principle
+
+A native app should be:
+
+**distinctive without fighting the platform.**
+
+The skill separates:
+
+1. **Product identity** — shared across platforms
+2. **Platform behavior** — allowed to differ between iOS and Android
+3. **Implementation framework** — SwiftUI/UIKit/Compose/Views should not dictate the visual identity
+
+It does **not** force pixel-identical cross-platform UI.
 
 ---
 
-## Features
+## What the skill covers
 
-- **Two-track methodology.** *Convention Track* adopts a proven design language for SaaS and utility products; *Innovation Track* builds brand-driven identity via Material Metaphor, archetype, narrative, or cultural-semiotic approaches.
-- **Anti-AI-slop guardrails.** Hard-banned combinations (purple-blue gradients, gray-box placeholders, single-hue palettes) are enforced as rules, not suggestions.
-- **Real-imagery requirement.** Any screen that shows imagery must use real, subject-specific assets — no decorative placeholders, fake stock smiles, or gradient blobs.
-- **Code-grade output.** Components resolve to atomic Tailwind class strings with an 8-state interaction model; motion uses spring physics, not fixed curves.
+- Product type and platform assessment
+- Information architecture and native navigation
+- Design research
+- Visual-direction exploration
+- Brand methodology / Material Metaphor
+- Semantic design tokens
+- Native component specifications
+- Touch states and gestures
+- iOS / Android platform mapping
+- Motion and haptics
+- Dynamic Type / font scaling
+- VoiceOver / TalkBack
+- Reduced motion
+- Safe areas / edge-to-edge / system bars
+- iPad / Android large-screen adaptation
+- Loading / empty / error / offline states
+- Native design audit
 
-## Showcase
+## Platform scope
 
-The same brief, with and without these skills installed.
+### Apple
+- iPhone
+- iPad
+- SwiftUI
+- UIKit
+- mixed SwiftUI/UIKit projects
 
-<table>
-  <tr>
-    <th>With OJO Skills</th>
-    <th>Without OJO Skills</th>
-  </tr>
-  <tr>
-    <td align="center"><img src="./docs/images/showcase-1-with.gif" alt="Coffee app home with OJO Skills" width="360"></td>
-    <td align="center"><img src="./docs/images/showcase-1-without.gif" alt="Coffee app home without OJO Skills" width="360"></td>
-  </tr>
-  <tr>
-    <td colspan="2" align="center"><img src="./docs/images/showcase-2-riot.gif" alt="Rock festival landing page with OJO Skills" width="720"></td>
-  </tr>
-</table>
+The design layer follows Apple Human Interface Guidelines and platform behavior rather than treating SwiftUI and UIKit as different design systems.
 
-## Design samples
+### Android
+- phones
+- tablets
+- foldables / adaptive layouts where relevant
+- Jetpack Compose
+- Android Views/XML
+- mixed Compose/View projects
 
-Additional output produced with these skills installed — one product, multiple surfaces.
+Kotlin is treated correctly as the implementation language; Compose and Views/XML are the UI implementation systems.
 
-<p align="center"><img src="./docs/images/showcase-design.png" alt="Landing page full section"></p>
-<p align="center"><img src="./docs/images/showcase-design-3.png" alt="Feature section"></p>
-<p align="center"><img src="./docs/images/showcase-design-4.png" alt="Feature section"></p>
-<p align="center"><img src="./docs/images/showcase-design-2.png" alt="Analytics dashboard"></p>
+---
 
 ## Quick start
 
-Install all skills with one command — replace `<client>` with your agent:
+Install into Codex:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/touchine-ojo/OJO-Design-Skills/main/scripts/install.sh | bash -s -- --target <client>
+curl -fsSL https://raw.githubusercontent.com/iknowshitaboutcoding/OJO-Design-Skills/main/scripts/install.sh | bash -s -- --target codex
 ```
 
-The remote installer requires Bash, `curl`, and `tar`.
-
-| Client | `--target` | Default install directory |
-| --- | --- | --- |
-| Codex | `codex` | `${CODEX_HOME:-~/.codex}/skills` |
-| Claude Code | `claude-code` | `${CLAUDE_HOME:-~/.claude}/skills` |
-| ZCode | `zcode` | `${AGENTS_HOME:-~/.agents}/skills` |
-| DeepCode | `deepcode` | `${AGENTS_HOME:-~/.agents}/skills` |
-| WorkBuddy | `workbuddy` | `${WORKBUDDY_HOME:-~/.workbuddy}/skills` |
-| OpenCode | `opencode` | `${OPENCODE_CONFIG_DIR:-~/.config/opencode}/skills` |
-| Generic agent | `generic` | `${AGENTS_HOME:-~/.agents}/skills` |
-
-Restart or reload the client if it does not pick up the new skills.
-
-<details>
-<summary>Advanced install options</summary>
-
-Replace existing copies without backups:
+Claude Code:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/touchine-ojo/OJO-Design-Skills/main/scripts/install.sh | bash -s -- --target codex --force
+curl -fsSL https://raw.githubusercontent.com/iknowshitaboutcoding/OJO-Design-Skills/main/scripts/install.sh | bash -s -- --target claude-code
 ```
 
-Install to a custom client home:
+Other supported targets:
+
+| Client | `--target` |
+| --- | --- |
+| Codex | `codex` |
+| Claude Code | `claude-code` |
+| ZCode | `zcode` |
+| DeepCode | `deepcode` |
+| WorkBuddy | `workbuddy` |
+| OpenCode | `opencode` |
+| Generic agent | `generic` |
+
+Install from a local checkout:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/touchine-ojo/OJO-Design-Skills/main/scripts/install.sh | CLAUDE_HOME=/path/to/.claude bash -s -- --target claude-code
+./scripts/install.sh --target codex
 ```
 
-Install to an explicit directory:
+Preview without writing:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/touchine-ojo/OJO-Design-Skills/main/scripts/install.sh | bash -s -- --target opencode --dest /path/to/skills
+./scripts/install.sh --target codex --dry-run
 ```
 
-Install from a local checkout (useful for development):
+---
 
-```bash
-./scripts/install.sh
-```
-
-Install from a different local checkout:
-
-```bash
-./scripts/install.sh --source /path/to/OJO-Design-Skills --target codex
-```
-
-Install a pinned tag or commit for a reproducible remote install:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/touchine-ojo/OJO-Design-Skills/main/scripts/install.sh | bash -s -- --target codex --ref <tag-or-commit>
-```
-
-Preview what would be written without changing files:
-
-```bash
-./scripts/install.sh --target opencode --dry-run
-```
-
-Install a single skill (`--skill` can be repeated):
-
-```bash
-./scripts/install.sh --target zcode --skill app-ui-ux-best-practices
-```
-
-</details>
-
-## Skills
+## Skill
 
 ### `app-ui-ux-best-practices`
 
-The core methodology. Picks a track based on the product's value proposition, then produces complete design specifications.
+The folder name is kept for installer compatibility, but the skill frontmatter is now:
 
-- **Convention Track** — adopt one proven design language (Notion, Linear, Stripe, Things 3, …) for SaaS and utility products.
-- **Innovation Track** — build a brand-driven identity via Material Metaphor, archetype, narrative, or cultural-semiotic methods.
-- Ships with **9 reference files**: anti-patterns, visual tokens, component recipes, motion system, material metaphor, design audit, and more.
-
-## How it works
-
-```
-Product brief
-   │
-   ├─ Convention Track ──► pick proven system ──► tokens ──► components ──► specs
-   │   (SaaS / utility)        (Notion, Linear…)
-   │
-   └─ Innovation Track ──► insight + feeling ──► methodology ──► tokens ──► specs
-       (brand-driven)         (Material Metaphor / archetype / narrative)
+```text
+native-app-ui-ux-best-practices
 ```
 
-Both tracks require a mandatory style-direction confirmation gate before producing tokens — the agent presents 2–3 genuinely distinct directions and waits for selection. Once installed, skills are activated automatically when the agent detects design-related intent (e.g. "design system", "视觉设计", "design tokens").
+The workflow is:
 
-## Contributing
-
-Skills are plain Markdown files under `skills/<name>/SKILL.md` plus optional `references/` files. To add or refine a skill, read the [contributing guide](./CONTRIBUTING.md), edit the relevant files, and run the installer locally to verify:
-
-```bash
-./scripts/install.sh --dry-run
+```text
+Product + platform brief
+        │
+        ├─ Information architecture
+        │
+        ├─ Native-platform research
+        │
+        ├─ Convention or Innovation track
+        │
+        ├─ Visual direction
+        │
+        ├─ Semantic tokens
+        │
+        ├─ Native component specs
+        │
+        ├─ Motion + haptics
+        │
+        ├─ Accessibility + adaptivity
+        │
+        └─ Native design audit
 ```
 
-Use [GitHub Discussions](https://github.com/touchine-ojo/OJO-Design-Skills/discussions) for questions and early ideas, and [Issues](https://github.com/touchine-ojo/OJO-Design-Skills/issues) for reproducible bugs or focused feature requests. Security concerns should follow the private process in [SECURITY.md](./SECURITY.md).
+---
 
-## License
+## Reference structure
 
-[MIT](./LICENSE)
+The skill ships with native-adapted references:
+
+- `anti-patterns.md`
+- `visual-tokens.md`
+- `component-recipe.md`
+- `component-libraries.md` — now a native platform-component reference
+- `motion-system.md`
+- `material-metaphor.md`
+- `icon-guidelines.md`
+- `hero-enrichment.md` — now native visual-enrichment guidance
+- `design-audit.md`
+
+## Important behavior
+
+The skill does **not**:
+
+- require React, React Native, Expo, or web frameworks
+- require a paid MCP
+- require Mobbin, Firecrawl, or any other paid research service
+- require third-party font services
+- output Tailwind classes as the design specification
+- redesign every native component for brand novelty
+
+External design-research services may still be used if the user already has access to them, but they are optional.
+
+---
+
+## Platform sources
+
+The skill is designed to defer to current official platform guidance where behavior matters:
+
+- [Apple Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/)
+- [Android mobile design guidance](https://developer.android.com/design/ui/mobile/)
+- [Material Design 3](https://m3.material.io/)
+- [Android accessibility guidance](https://developer.android.com/guide/topics/ui/accessibility/)
+
+Because platform guidance evolves, agents should prefer current official documentation over hardcoded old implementation assumptions.
+
+---
+
+## Upstream and license
+
+This project is a fork/adaptation of:
+
+[**touchine-ojo/OJO-Design-Skills**](https://github.com/touchine-ojo/OJO-Design-Skills)
+
+The original methodology and this adaptation are distributed under the repository's **MIT License**.
+
+The goal of this fork is not to replace OJO's web-oriented skill. It is to preserve its design methodology while making the rules safe and useful for native mobile products.

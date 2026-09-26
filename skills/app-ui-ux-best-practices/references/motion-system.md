@@ -1,713 +1,614 @@
-# Motion System Reference
+# Native Motion System Reference
 
-Animation and interaction behavior specification combining spring physics with purpose-driven motion principles.
+Motion in native apps is part of interaction design, not decoration.
 
----
+The motion system must remain meaningful whether the UI is implemented in SwiftUI, UIKit, Jetpack Compose, or Android Views/XML. Specify perceived behavior first; framework APIs come later.
 
-## Motion Purpose Test (CRITICAL)
-
-**Evaluate BEFORE adding any animation. Every animation MUST pass ONE of these tests:**
-
-### 1. Feedback
-Confirms user's action was received.
-
-**Examples:**
-- Button press scales down (active:scale-[0.98])
-- Form submit shows spinner
-- Toggle switch slides
-- Like button fills with color
-
-**Test:** Does this animation tell the user "we received your input"?
-
-### 2. Guidance
-Directs attention to important content or next step.
-
-**Examples:**
-- Modal enters from center (draws eye to content)
-- Error message slides in near invalid field
-- Success checkmark appears on completed task
-- Onboarding tooltip points to feature
-
-**Test:** Does this animation help the user know where to look next?
-
-### 3. Continuity
-Maintains spatial context during transitions.
-
-**Examples:**
-- Card expands to detail view (morphs in place)
-- Navigation slides from expected direction
-- Accordion expands/collapses (preserves position)
-- Image gallery swipes (maintains spatial relationship)
-
-**Test:** Does this animation help the user understand where they are in the interface?
-
-### 4. Brand Expression
-Reinforces product's unique character.
-
-**Examples:**
-- Playful bounce on error (personality)
-- Liquid morphing transitions (brand aesthetic)
-- Custom loading animation (identity)
-- Signature hover effect (differentiation)
-
-**Test:** Does this animation express something unique about the brand?
+Official platform behavior takes priority over generic web animation recipes.
 
 ---
 
-## The "Worth-It Test"
+# 1. Motion Purpose Test
 
-**Before adding any motion effect, ask:**
+Every custom animation must serve at least one purpose.
 
-> "Would you spend a week hand-coding this? If no, it probably isn't worth including even though AI makes it free."
+## Feedback
+Confirms input or state.
 
-**Why This Matters:**
-- Just because something is easy doesn't mean it's worth doing
-- Animation adds complexity (code, maintenance, performance)
-- More animation ≠ better UX
-- Users came for content, not animations
+Examples:
+- press response
+- selection change
+- successful drop
+- toggle transition
+- validation result
 
-**Apply This Test To:**
-- Scroll-triggered fade-ins
-- Parallax effects
-- Cursor-following elements
-- Decorative background animations
-- Page load animations that delay content
+## Guidance
+Directs attention or clarifies what changed.
 
----
+Examples:
+- revealing a newly inserted row
+- highlighting the origin of a changed state
+- drawing attention to an error that needs action
 
-## Motion Pattern Trade-offs (Use Purposefully)
+## Continuity
+Explains spatial or object relationships.
 
-These patterns have historically been criticized in design reviews. They are NOT banned — they are available techniques that **must pass the Motion Purpose Test** (Feedback / Guidance / Continuity / Brand Expression) before use. Each carries trade-offs documented below; weigh them against the brand intent and the Material Metaphor before applying.
+Examples:
+- expanding an item into detail
+- sheet presentation
+- list-detail transition
+- drag and drop
 
-The default disposition is "use sparingly and with clear intent." When the brand demands expressive motion (e.g. cinematic landing pages, immersive product reveals, brand-forward marketing), these patterns become legitimate craft tools.
+## Brand expression
+Creates a recognizable emotional quality.
 
-### 1. Fade-In on Scroll
+Examples:
+- rare onboarding transitions
+- celebration
+- a distinctive content transformation
+- product-specific direct manipulation
 
-**Pattern:** Static content fades in as user scrolls to it.
-
-**Trade-offs to weigh:**
-- Adds slight delay to content access
-- Can annoy power users who scroll quickly
-- When overused, becomes purely decorative
-
-**When it works:**
-- Brand expression on cinematic landing / story-driven pages
-- Loading dynamic content (infinite scroll) — Feedback for loading state
-- Pacing reveal of dense data viz / long-form narrative
-
-**When to avoid:** Utility-dense screens (dashboards, settings, data tables) where speed of access matters.
-
-### 2. Scroll Hijacking (Smooth Scroll / Section Snap / Parallax)
-
-**Pattern:** Custom scroll behavior that augments browser defaults.
-
-**Trade-offs to weigh:**
-- May break user's muscle memory
-- Can interfere with browser scroll controls / fast-scroll
-- Accessibility risk if overdone
-
-**When it works:**
-- Section snapping on landing pages where each section is a discrete chapter
-- Parallax for depth / brand storytelling on hero sections
-- Smooth scroll for anchor navigation (`scroll-behavior: smooth`)
-- One-page narrative product tours
-
-**When to avoid:** Documentation, long-form reading, application UI, anywhere the user's primary goal is "scan to find something fast."
-
-**Implementation note:** Even when used, leave keyboard shortcuts (Page Down / Home / End) and fast-scroll behavior intact.
-
-### 3. Decorative Scroll Lines / Paths
-
-**Pattern:** Animated lines or paths that follow scroll position.
-
-**Trade-offs to weigh:**
-- Performance overhead
-- Can distract from primary content if too prominent
-
-**When it works:**
-- Progress indicator for long-form articles (purpose: Guidance — "how much is left")
-- Story-driven landing pages where the path IS the narrative spine
-- Process / timeline visualizations where the line carries meaning
-
-**When to avoid:** Application UI, dense content surfaces.
-
-### 4. Cursor-Following Elements
-
-**Pattern:** Buttons or graphics that respond to mouse position.
-
-**Trade-offs to weigh:**
-- Doesn't help keyboard / touch users
-- Performance cost
-- Can feel gimmicky if not tied to brand
-
-**When it works:**
-- Brand expression on agency / portfolio / creative-tool sites
-- Spotlight effect that genuinely improves visibility (e.g. dark-mode hero)
-- Subtle button tilt / magnetic hover when it reinforces the declared register (playful overshoot, tactile-polished settle, or mechanical snap — derived, not assumed)
-- Interactive 3D / WebGL hero compositions
-
-**When to avoid:** Application UI, anywhere keyboard users will outnumber mouse users.
-
-### 5. Auto-Advancing Content
-
-**Pattern:** Content changes on a timer without explicit user input.
-
-**Trade-offs to weigh:**
-- Users read at different speeds
-- Can feel rushed if intervals are too short
-- WCAG 2.2.2 — must be pausable when interactive
-
-**When it works:**
-- Hero carousels with visible progress indicators + pause-on-hover + manual controls
-- Auto-playing background video (muted, decorative) on landing pages
-- Timed empty-state hints that cycle while user is idle
-- Status / live-feed surfaces (stock tickers, sports scores)
-
-**When to avoid:** Any flow where missing content has cost (forms, settings, payment). Always provide pause + manual controls.
-
-### 6. Pulsing / Looping Animations Near Content
-
-**Pattern:** Continuous motion (pulse, loop, drift) near body content.
-
-**Trade-offs to weigh:**
-- Persistent motion competes for attention with reading
-- Can cause vestibular issues for sensitive users
-- High visual cost if not tied to meaning
-
-**When it works:**
-- Live indicators (red dot pulsing on "LIVE" badge — purpose: Feedback)
-- Notification badges drawing attention to actionable changes
-- Brand expression backgrounds (subtle gradient drift, ambient particles) when low-contrast and far from primary content
-- Multiplayer / collaborative feature visualizations where the motion reinforces "alive / shared"
-
-**When to avoid:** Within reading flow, immediately adjacent to forms / inputs, or as the primary visual treatment of a content surface.
-
-**Implementation note:** All looping animations MUST honor `prefers-reduced-motion` (covered later in this doc).
+If motion serves none of these, remove it.
 
 ---
 
-## Scroll Behavior Rules
+# 2. Native Motion Principle
 
-These rules describe the **default** behavior. Augmentations (smooth scroll, section snap, parallax, scroll-driven fade) are allowed when they pass the Motion Purpose Test and clearly serve brand or comprehension — see "Motion Pattern Trade-offs" above. Even when augmenting, preserve the accessibility floor in each rule.
+Prefer the platform's built-in motion for standard navigation and standard components.
 
-### Rule 1: Preserve Native Scroll Accessibility Floor
+Why:
+- it matches user expectations
+- it usually handles interruption well
+- it coordinates with system gestures
+- it tends to respect platform accessibility behavior
+- it reduces the risk of custom motion fighting navigation semantics
 
-Augment native scroll if the design demands it, but the following must keep working under all augmentations:
-- Scrollbar reflects actual page position
-- Keyboard shortcuts continue to work (Space, Page Down, Page Up, Home, End)
-- Fast-scroll is reachable (not trapped in section-snap molasses on every section)
-- Touch scrolling retains native momentum
-- `prefers-reduced-motion` disables smooth-scroll easing, parallax, and scroll-driven animations
+Custom motion is most valuable in:
+- domain-specific interactions
+- content transformations
+- branded moments
+- direct manipulation
+- complex state changes that benefit from explanation
 
-### Rule 2: Default to "Content Just Be There"; Stage Reveals Only Purposefully
-
-Default behavior: content scrolling into view should be immediately present and readable. Reach for staged reveals (fade-in / slide-in / blur-to-focus / stagger) only when the brand intent demands it — typically narrative landing pages, marketing surfaces, or cinematic product reveals. Application UI, dashboards, settings, and reading flows should keep the default.
-
-When staging a reveal:
-- Keep the duration short (≤ 400ms) so power-scrollers aren't blocked
-- Ensure content is functionally accessible immediately even if the visual reveal is incomplete
-- Honor `prefers-reduced-motion` (skip the reveal entirely)
-
-### Rule 3: Respect Browser Scroll Indicator
-
-The scroll indicator (scrollbar thumb position) must accurately reflect:
-- Current position in document
-- Remaining content below/above
-- Document total height
-
-**Don't:**
-- Change document height during scroll in ways that mislead the indicator
-- Hide scrollbar without good reason (acceptable on full-bleed marketing surfaces with custom indicators)
-- Use fake scroll indicators that don't reflect real position
+Do not replace a correct system transition merely because it looks "too default."
 
 ---
 
-## Spring Physics Parameters
+# 3. Perceived Physics Before Parameters
 
-Define animations using stiffness/damping/mass instead of just duration for more natural motion.
+Describe motion using perceptual language:
 
-### Parameter Reference
+- instant
+- crisp
+- snappy
+- controlled
+- damped
+- heavy
+- elastic
+- soft
+- abrupt
+- floating
+- continuous
 
-**Stiffness:** How quickly the spring tries to reach its target
-- Low (100-150): Slow, gentle
-- Medium (200-300): Standard UI interactions
-- High (400-500): Snappy, responsive
+Then map that to the platform's animation system.
 
-**Damping:** How much resistance the spring has
-- Low (5-10): Bouncy, overshoots
-- Medium (15-25): Smooth, minimal overshoot
-- High (30-40): No overshoot, quick settle
+Do not define one universal stiffness/damping pair and assume it feels identical across:
+- SwiftUI springs
+- UIKit spring timing
+- Compose spring specs
+- Android physics/Animator APIs
 
-**Mass:** How heavy the object feels (rarely changed)
-- Light (0.5-0.8): Quick, floaty
-- Standard (1.0): Normal
-- Heavy (1.5-2.0): Weighty, substantial
-
-### Common Patterns
-
-**Button Press (Snappy Feedback):**
-```
-scale: 0.98
-stiffness: 400
-damping: 10
-mass: 0.5
-```
-
-**Modal Open (Smooth Entry):**
-```
-y: 0 (from 20px)
-opacity: 1 (from 0)
-stiffness: 250
-damping: 25
-mass: 1.0
-```
-
-**Hover State (Playful Lift):**
-```
-y: -2px
-stiffness: 300
-damping: 15
-mass: 0.8
-```
-
-**Page Transition (Substantial Movement):**
-```
-x: 0 (from 100%)
-opacity: 1 (from 0)
-stiffness: 200
-damping: 30
-mass: 1.2
-```
+Frameworks expose different models and units.
 
 ---
 
-## Motion Archetypes (Action-Verb + Physical Anchor)
+# 4. Motion Archetypes
 
-The aesthetic side of the Material Metaphor (full base-material catalogue, environments, visual physics rules, edge treatment, surface luster, ambient warmth) lives in `material-metaphor.md`. This section covers the motion-physics slice — concrete spring archetypes named by action verb + physical-device anchor.
+Use archetypes as design intent, not fixed constants.
 
-**No material → archetype lookup is provided.** After locking the material via `material-metaphor.md`, REASON about which archetype fits — based on the material's weight, surface friction, deformability, environment damping, AND the specific interaction's purpose. The same material can map to different archetypes in different contexts (e.g., Glass in a Jazz Club setting feels different from Glass in a Modern Gallery; a button press and a page transition on the same material warrant different archetypes).
+| Archetype | Feel | Good for |
+|---|---|---|
+| Click | immediate, decisive | buttons, toggles, selection |
+| Slide | controlled spatial travel | sheets, drawers, reordering |
+| Flow | soft, atmospheric | rare transitions, calm experiences |
+| Thunk | weighty, final | meaningful placement/confirmation |
+| Bounce | playful overshoot | games, celebration, toy-like products |
+| Drift | slow, light | ambient/meditative moments |
 
-**Convention Track:** Use standard easing from selected reference system (typically ease-out). Archetypes below are for Innovation Track.
+Select the archetype from:
+- product register
+- material metaphor
+- object weight
+- interaction frequency
+- task seriousness
 
-**Innovation Track — six archetypes:**
-
-| Verb | Physical anchor | Stiffness / Damping | Feel | Use cases |
-|------|----------------|----------------------|------|-----------|
-| **Click** | 磁铁吸合 / 卡扣 / 拨动开关 (magnet snap, latch, toggle) | 350-400 / 10-15 | Quick decisive snap, low resistance | button press, modal entry, dropdown reveal, toggle |
-| **Slide** | 气压关门器 / 抽屉阻尼 (pneumatic door closer, drawer damper) | 250-300 / 20-25 | Smooth controlled travel, natural resistance | bottom sheet, accordion, drawer, FAB flyout |
-| **Flow** | 蜂蜜倾倒 / 雾气弥散 (honey pour, mist diffusion) | 150-200 / 30-40 | Heavy damping, atmospheric travel | parallax, ambient morph, page transition, hero reveal |
-| **Thunk** | 锤击 / 重物落桌 (hammer strike, heavy object landing) | 400-500 / 5-10 | Immediate, weighty, percussive | hard-confirm select, weight-feedback, success thud |
-| **Bounce** | 橡皮球 / 弹簧床 (rubber ball, trampoline) | 300 / 8 | Playful overshoot, elastic | celebratory toast, kids/games, gamified confirm |
-| **Drift** | 氦气球 / 棉絮飘 (helium balloon, drifting cotton) | 100 / 25 | Slow buoyant float | meditation, dreamy reveal, idle ambient loop |
-
-**Reasoning prompts (use these to pick an archetype):**
-- Is the material **heavy** (stone, metal, ceramic) or **light** (paper, fabric, mist)? Heavy → Thunk / Click; light → Drift / Flow.
-- Is the surface **rigid** (glass, steel) or **deformable** (fabric, vellum, blown glass)? Rigid → Click / Thunk; deformable → Slide / Flow.
-- Is the environment **damping** (Misty Garden, Library) or **stark** (Desert Noon, Gallery)? Damping → Flow / Drift; stark → Click / Thunk.
-- Is the interaction **high-frequency UI** (button, toggle) or **rare brand moment** (page transition, hero)? High-frequency → Click / Slide; rare → Flow / Drift / Bounce.
-
-Custom metaphors from `material-metaphor.md` "Invention Over Replication" should be reasoned through the same prompts — there is no fallback lookup.
+High-frequency UI should usually use Click or restrained Slide behavior.
 
 ---
 
-## Duration Ranges
+# 5. Navigation and Presentation
 
-When using CSS transitions (not spring physics):
+## iOS / iPadOS
 
-### Quick (150-200ms)
-**Use For:** Micro-interactions, state changes
-- Button hover
-- Input focus
-- Icon state changes
-- Color transitions
+Respect the spatial model of:
+- navigation stacks
+- sheets
+- full-screen covers
+- popovers
+- tab switching
+- interactive dismissal
 
-**Tailwind:** `duration-150`, `duration-200`
+Do not invent unrelated directions for enter and exit.
 
-### Standard (250-350ms)
-**Use For:** Transitions, UI state changes
-- Modal open/close
-- Dropdown expand
-- Tab switching
-- Card expansion
+If a system transition already communicates the relationship correctly, use it.
 
-**Tailwind:** `duration-300`
+Custom transitions must:
+- remain interruptible where practical
+- preserve back/dismiss expectations
+- avoid disorienting scale/zoom in frequent flows
+- respond sensibly to Reduce Motion
 
-### Emphasis (400-600ms)
-**Use For:** Page transitions, hero animations
-- Page route changes
-- Hero image loading
-- Major layout shifts
-- Onboarding steps
+## Android
 
-**Tailwind:** `duration-500`
+Respect:
+- system back / predictive back
+- navigation hierarchy
+- sheet/dialog semantics
+- container transforms or Material motion patterns when they clarify relationship
+- edge-to-edge and system gesture regions
 
-### Exit Duration Rule
-Exit animations should be ~75% of entrance duration.
-
-**Example:**
-- Enter: 300ms
-- Exit: 225ms
-
-**Why:** Users are more patient when things appear than when they disappear.
+Do not animate in ways that contradict back navigation or make predictive back feel disconnected from the destination.
 
 ---
 
-## Easing Functions
+# 6. Gesture-Driven Motion
 
-### Preferred Easing: Exponential Deceleration
+Direct manipulation should track the gesture closely.
 
-**Best:** `ease-out-quart`, `ease-out-quint`
+Examples:
+- drag
+- swipe action
+- pull-to-refresh
+- reorder
+- scrubber
+- interactive dismissal
+- sheet drag
 
-**Why:** Feels natural (objects slow down as they come to rest in real world)
+Rules:
+- movement follows the user's input
+- resistance communicates limits
+- release resolves predictably
+- cancellation is possible when appropriate
+- state remains clear during the gesture
+- system-edge gestures are respected
 
-**Tailwind:** `ease-out` (built-in approximation)
-
-### Never Use As Default
-
-**BANNED as unconsidered defaults:** `ease-in-out-bounce`, `ease-in-out-elastic`
-
-**Why:** Feels dated (2010s web design) when applied out of habit. Exception: a genuinely playful register (kids products, toy-like brands) may use spring overshoot deliberately — via spring physics parameters (low damping), not CSS bounce presets.
-
-### Easing by Purpose
-
-| Purpose | Easing | Reason |
-|---------|--------|--------|
-| **Entrance** | ease-out | Starts fast, ends slow (arrives naturally) |
-| **Exit** | ease-in | Starts slow, ends fast (departs quickly) |
-| **Movement** | ease-in-out | Smooth acceleration and deceleration |
-| **Feedback** | ease-out | Immediate response, gentle settle |
-
-### Inertia by Register
-
-**Quiet/polished registers:** never linear easing (`transition: all 300ms linear;`). Nothing in nature moves at constant speed; unconsidered linear looks robotic. Use ease-out, ease-in, or ease-in-out.
-
-**Loud/raw registers (punk zine, brutalist, industrial, glitch):** hard cuts (no transition), linear snaps at 80-150ms, and stepped/frame-skip reveals (`steps(n)`) are legitimate brand expression — the mechanical, abrupt character IS the material. Use them deliberately and consistently, not as leftover defaults.
-
-**The actual ban:** unconsidered easing — linear left in place by accident in a polished register, or springs smoothing away the deliberate abruptness of a raw register. The curve must be chosen from the declared register, both directions.
+Avoid animations that continue independently while the user is still directly manipulating the same object unless the behavior is intentional and understandable.
 
 ---
 
-## Element Appearance by Material
+# 7. Press Feedback
 
-How elements enter and exit based on material metaphor.
+Custom buttons and tappable surfaces need immediate feedback.
 
-| Material | Enter Animation | Exit Animation | Duration |
-|----------|----------------|----------------|----------|
-| **Glass** | Fade + scale up from 0.95 | Fade + scale down to 0.95 | 250-300ms |
-| **Paper** | Slide from edge + fade | Slide away + fade | 300-350ms |
-| **Water/Ink** | Expand from center (ripple) | Dissolve/fade | 400-500ms |
-| **Mist** | Slow fade in (opacity only) | Slow fade out | 500-600ms |
-| **Metal** | Quick fade + snap into place | Quick fade + snap out | 150-200ms |
-| **Fabric** | Unfold/drape from top | Fold/collapse | 350-400ms |
+Possible feedback:
+- slight scale compression
+- tint/state layer
+- opacity/brightness shift
+- depth reduction
+- highlight
+- subtle haptic for meaningful actions
 
-### Implementation Examples
+Avoid:
+- large scale jumps
+- content movement that changes layout
+- bounce on every tap
+- delay before feedback begins
 
-**Glass Enter:**
-```css
-@keyframes glass-enter {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-```
-
-**Paper Enter:**
-```css
-@keyframes paper-enter {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-```
+System controls may already handle press feedback; do not double-animate them.
 
 ---
 
-## Motion Polish (Both Tracks)
+# 8. Haptics
 
-### 1. Button Tactile Feedback (MANDATORY)
+Haptics are a parallel feedback channel, not visual decoration.
 
-**Requirement:** All buttons MUST provide immediate tactile feedback.
+Useful roles:
+- selection
+- success
+- warning
+- error
+- meaningful impact
+- threshold crossing
+- completed drag/drop
 
-**Implementation:**
-```
-active:scale-[0.98]
-```
+Avoid:
+- haptic on every ordinary tap
+- haptic that contradicts the visual result
+- repeated haptic during continuous scrolling
+- relying on haptic as the only confirmation
 
-**Why:** Buttons should never feel "dead" or unresponsive.
-
-**Duration:** 50-100ms (nearly instant)
-
-### 2. Staggered List Entries
-
-**Pattern:** When multiple items appear, stagger their entrance.
-
-**Implementation:**
-```css
-.item:nth-child(1) { animation-delay: 0ms; }
-.item:nth-child(2) { animation-delay: 30ms; }
-.item:nth-child(3) { animation-delay: 60ms; }
-.item:nth-child(4) { animation-delay: 90ms; }
-```
-
-**Delay:** 30-50ms between items
-
-**Max Items:** Stagger first 6-8 items, then show rest immediately (avoid long waits)
-
-**When to Use:** Initial page load, filtering results, expanding lists
-
-**When NOT to Use:** Scrolling to new content (violates "content should just be there" rule)
-
-### 3. GPU Acceleration (MANDATORY)
-
-**Animate ONLY These Properties:**
-- `transform` (translate, scale, rotate)
-- `opacity`
-
-**NEVER Animate:**
-- `width`, `height` (causes reflow)
-- `top`, `left`, `right`, `bottom` (causes reflow)
-- `margin`, `padding` (causes reflow)
-- `font-size` (causes reflow)
-
-**Why:** Transform and opacity are GPU-accelerated, others force CPU layout recalculation.
-
-**Height Animation Alternative -- `grid-template-rows`:**
-For accordions, collapsible sections, and expand/collapse patterns, use `grid-template-rows: 0fr` to `1fr` instead of animating `height` directly:
-
-```css
-.collapsible {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 300ms ease-out;
-}
-.collapsible.open {
-  grid-template-rows: 1fr;
-}
-.collapsible > .content {
-  overflow: hidden;
-}
-```
-
-**Why this is better than `height` animation**: you don't need to know or calculate the target height -- the browser resolves `1fr` for you. This makes it reliable for dynamic content where the expanded height is unknown. **Note**: this still triggers layout during animation (changing track sizes is a layout operation), so keep collapsible sections simple and avoid nesting many animated grids simultaneously. For performance-critical cases with fixed heights, prefer `transform: scaleY()` with `transform-origin: top`.
-
-**Force GPU Acceleration:**
-```css
-.animated-element {
-  will-change: transform, opacity;
-  transform: translateZ(0); /* Force hardware acceleration */
-}
-```
-
-**Warning:** Don't overuse will-change (memory cost). Apply only to actively animating elements.
-
-### 4. Reduced Motion Support (MANDATORY)
-
-**Requirement:** All animations must respect prefers-reduced-motion.
-
-**Implementation:**
-```css
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-```
-
-**Or per-element:**
-```css
-.animated-element {
-  animation: slide-in 300ms ease-out;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animated-element {
-    animation: none;
-    opacity: 1; /* Ensure content is visible */
-  }
-}
-```
-
-**Alternative:** Crossfade instead of movement
-```css
-@media (prefers-reduced-motion: reduce) {
-  .animated-element {
-    /* Replace slide with fade */
-    animation: fade-in 150ms ease-out;
-  }
-}
-```
+Describe the semantic role, then map to platform APIs.
 
 ---
 
-## Motion Specification Template
+# 9. Duration Guidance
 
-For each animation, document:
+Do not treat duration values as universal laws.
 
-```markdown
-## [Animation Name]
+Useful ranges for custom UI motion:
 
-**Purpose:** [Feedback / Guidance / Continuity / Brand]
+### Immediate feedback
+roughly 80–180 ms perceived response
 
-**Trigger:** [User action or system event]
+Use for:
+- press
+- selected state
+- icon/tint change
 
-**Properties:**
-- Duration: [150-200ms / 250-350ms / 400-600ms]
-- Easing: [ease-out / ease-in / ease-in-out]
-- Transform: [specific values]
-- Opacity: [start → end]
+### Local transition
+roughly 180–350 ms
 
-**Spring Parameters (if applicable):**
-- Stiffness: [value]
-- Damping: [value]
-- Mass: [value]
+Use for:
+- expand/collapse
+- local content replacement
+- small panel changes
 
-**Reduced Motion:**
-- [Crossfade / Disabled / Instant]
+### Presentation / major transition
+roughly 250–500 ms
 
-**Implementation:**
-```css
-[CSS code]
-```
-```
+Use for:
+- custom sheet/panel transitions
+- larger transformations
+- onboarding step transitions
 
----
+### Brand emphasis
+may exceed these ranges when rare and justified, but should not block task progress.
 
-## Common Animation Patterns
+The correct duration depends on:
+- travel distance
+- object size
+- gesture velocity
+- product register
+- platform
+- accessibility settings
 
-### Button Hover & Press
-
-```css
-.button {
-  transition: all 200ms ease-out;
-}
-
-.button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-.button:active {
-  transform: scale(0.98);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition-duration: 50ms;
-}
-```
-
-**Purpose:** Feedback (confirms interaction)
-
-### Modal Open
-
-```css
-@keyframes modal-open {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.modal {
-  animation: modal-open 300ms ease-out;
-}
-```
-
-**Purpose:** Guidance (draws attention to dialog)
-
-### Skeleton Loading
-
-```css
-@keyframes skeleton-pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-.skeleton {
-  animation: skeleton-pulse 1.5s ease-in-out infinite;
-}
-```
-
-**Purpose:** Feedback (content is loading)
-
-### Page Transition
-
-```css
-@keyframes page-enter {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.page {
-  animation: page-enter 350ms ease-out;
-}
-```
-
-**Purpose:** Continuity (shows direction of navigation)
+Exit motion often feels better slightly faster than entry, but do not force a fixed 75% formula.
 
 ---
 
-## Performance Checklist
+# 10. Easing Guidance
 
-Before shipping animations:
+Choose easing from purpose.
 
-- [ ] Only animating transform and opacity
-- [ ] No layout thrashing (no width/height/margin animations)
-- [ ] will-change applied only to actively animating elements
-- [ ] Animations complete in under 600ms (user tolerance threshold)
-- [ ] Infinite / looping animations near text or interactive elements are intentional and tied to meaning (live indicators, brand expression) — not decorative noise
-- [ ] Reduced motion support implemented (mandatory for any infinite animation, scroll-driven motion, parallax, or staged reveal)
-- [ ] Tested on low-end devices (animations don't jank)
-- [ ] All animations pass Motion Purpose Test
-- [ ] All animations pass Worth-It Test
-- [ ] Patterns from "Motion Pattern Trade-offs" used purposefully and weighed against trade-offs (not as decorative defaults)
+### Entrance
+Usually decelerates into rest.
 
----
+### Exit
+Usually leaves decisively.
 
-## Quality Gate Questions
+### Direct manipulation
+Tracks the gesture rather than following a canned timing curve.
 
-Before adding any animation, answer these:
+### Spatial movement
+Should preserve continuity and perceived momentum.
 
-1. **Which purpose does this serve?** (Feedback / Guidance / Continuity / Brand)
-2. **Would I spend a week coding this?** (Worth-It Test)
-3. **Does this help users complete their task faster?** (Utility Test)
-4. **Does this work with reduced-motion enabled?** (Accessibility Test)
-5. **Is this GPU-accelerated?** (Performance Test)
+### Raw/graphic registers
+Hard cuts or abrupt snaps can be legitimate brand choices.
 
-**If you can't answer all 5 confidently: DON'T ADD THE ANIMATION.**
+### Calm/polished registers
+Damped, smooth settling may fit better.
+
+Do not use:
+- linear motion by accident
+- elastic bounce as default personality
+- long ease-in delays that make controls feel unresponsive
 
 ---
 
-## Integration with Component Recipe
+# 11. Material-Informed Motion
 
-Motion system specifications should reference component states from component-recipe:
+A material metaphor can influence perceived physics.
 
-- Default → Hover: duration-200 ease-out
-- Hover → Active: duration-50 ease-out
-- Any → Disabled: duration-150 opacity only
-- Any → Loading: duration-200 ease-in-out
-- Any → Error/Success: duration-300 ease-out
+Examples:
 
-Pass motion specifications to design-audit for quality review before implementation.
+### Glass
+- precise
+- light-to-medium inertia
+- clean settling
+- restrained depth change
+
+### Paper
+- layered
+- directional reveal
+- slight edge/stack relationship
+
+### Fabric
+- softer deformation
+- controlled fold/expand feeling
+
+### Metal
+- crisp
+- heavier
+- short travel
+- decisive settling
+
+### Mist
+- low positional travel
+- opacity/atmospheric change
+- avoid blocking reading
+
+### Raw print / zine
+- hard cuts
+- stepped changes
+- abrupt offset shifts
+- intentionally imperfect timing
+
+Do not literalize the metaphor with gimmicks. A financial app inspired by stone does not need every card to "fall" with heavy physics.
+
+---
+
+# 12. Lists
+
+Do not automatically stagger every row when a list appears.
+
+Stagger can help when:
+- a small group is introduced once
+- the sequence itself matters
+- onboarding/celebration benefits from rhythm
+
+Avoid stagger for:
+- scrolling lists
+- search results
+- repeatedly refreshed data
+- long feeds
+- settings
+
+Content should usually become available immediately.
+
+When inserting/removing/reordering an item, animate the affected spatial relationship rather than replaying the entire list.
+
+---
+
+# 13. Loading Motion
+
+Choose the loading pattern from the task.
+
+### Immediate
+No loader if the result appears almost instantly.
+
+### Indeterminate
+Use when the wait exists but progress cannot be measured.
+
+### Determinate
+Use when progress is meaningful.
+
+### Skeleton
+Useful when preserving content structure helps orientation.
+
+### Offline/queued
+A spinner may be wrong if the real state is "waiting for network" or "queued."
+
+Avoid endless decorative pulsing around text.
+
+---
+
+# 14. Reduced Motion
+
+Reduced-motion behavior is mandatory for meaningful custom motion.
+
+## iOS
+Respond to Reduce Motion.
+
+Good substitutions:
+- fade instead of large translation
+- instant state change
+- shorter/tighter spring
+- remove depth/zoom animation
+- preserve direct gesture tracking when it aids control
+
+## Android
+Respect relevant user/system accessibility animation preferences and avoid making core comprehension depend on motion.
+
+Good substitutions:
+- instant or simplified transition
+- crossfade
+- reduced travel
+- reduced overshoot
+- no ambient loop
+
+Do not simply set every animation to 0.01 ms if that creates unreadable state changes. Preserve comprehension.
+
+---
+
+# 15. Motion and Large Content Changes
+
+When content changes significantly:
+- preserve focus
+- preserve scroll context where possible
+- do not move the target under the user's finger
+- explain relationship through layout/motion only when useful
+- avoid layout jumps
+
+Examples:
+- inserting a row near the current position should not unexpectedly throw the user to the top
+- changing a filter should make the new result set clear without replaying decorative entrance animations
+
+---
+
+# 16. Keyboard / IME Motion
+
+The software keyboard is system UI.
+
+Design:
+- focused input remains visible
+- primary action remains reachable when appropriate
+- content does not jump unpredictably
+- sheet/form layout responds to keyboard height and platform behavior
+
+Do not specify fixed keyboard heights or fake keyboard animations.
+
+---
+
+# 17. System Bars and Edge-to-Edge
+
+Status bars, gesture navigation, and home indicators are not animated product components.
+
+Do not:
+- animate fake status icons
+- draw a custom home indicator
+- move content using hardcoded top/bottom values tied to one device
+
+If content moves under system bars, the transition should preserve contrast and safe interaction regions.
+
+---
+
+# 18. Continuous / Ambient Motion
+
+Use only when it provides:
+- live status
+- environment/brand ambience
+- progress
+- direct manipulation feedback
+
+Rules:
+- low attentional cost
+- far from long-form reading when decorative
+- pauses/stops when offscreen where practical
+- reduced-motion alternative
+- no critical information available only through the loop
+
+Avoid:
+- breathing cards
+- endlessly floating buttons
+- random particles
+- pulsing decorative gradients
+
+unless the product experience genuinely calls for them.
+
+---
+
+# 19. Motion Specification Template
+
+For each custom motion:
+
+## [Motion name]
+
+**Purpose**
+Feedback / Guidance / Continuity / Brand
+
+**Trigger**
+User action or system event
+
+**Affected elements**
+What moves/changes
+
+**Perceived behavior**
+snappy / damped / heavy / elastic / abrupt / etc.
+
+**Spatial logic**
+Where it comes from and where it goes
+
+**Timing**
+Range or relative speed
+
+**Interruption**
+Can the user reverse/cancel/interact during motion?
+
+**Haptics**
+none / selection / success / impact / etc.
+
+**Reduced motion**
+fade / instant / reduced travel / no loop / other
+
+**iOS mapping note**
+Only when useful
+
+**Android mapping note**
+Only when useful
+
+---
+
+# 20. Framework Mapping Examples
+
+## SwiftUI
+Use the design spec to choose:
+- state-driven animation
+- transition
+- matched geometry where appropriate
+- transaction
+- gesture
+- sensory/haptic feedback
+- reduce-motion environment handling
+
+Do not write SwiftUI APIs into the design token itself.
+
+## UIKit
+Map to:
+- UIViewPropertyAnimator
+- transition coordinator
+- custom presentation/transition APIs
+- gesture recognizers
+- haptic feedback generators
+- accessibility motion settings
+
+Again, preserve the design intent rather than reproducing SwiftUI syntax.
+
+## Jetpack Compose
+Map to:
+- state animation
+- AnimatedVisibility/content transition
+- updateTransition
+- animateContentSize
+- spring/tween specs
+- gesture APIs
+- haptics/accessibility behavior
+
+## Android Views/XML
+Map to:
+- property animation
+- MotionLayout/Transition framework where appropriate
+- view state animation
+- gesture/drag systems
+- accessibility/user animation settings
+
+Compose and Views should produce the same product motion language.
+
+---
+
+# 21. Performance Principles
+
+Native performance rules are framework-dependent, so the design skill should not make blanket claims such as "only transform and opacity."
+
+Instead:
+
+- prefer motion that can be rendered smoothly on target devices
+- avoid animating enormous blurred surfaces unnecessarily
+- avoid simultaneous expensive effects across many rows
+- test large lists and image-heavy screens
+- minimize continuous offscreen work
+- reuse system/native transitions where they are optimized
+- coordinate motion with scrolling and gestures
+- profile custom complex effects during implementation
+
+A design specification should identify high-cost effects so engineering can validate them.
+
+---
+
+# 22. Quality Gate
+
+Before approving motion:
+
+- [ ] The motion has a purpose
+- [ ] Standard platform motion is retained where it is already correct
+- [ ] High-frequency tasks remain fast
+- [ ] Gesture-driven motion tracks input
+- [ ] Spatial direction makes sense
+- [ ] The user can continue working without waiting unnecessarily
+- [ ] Reduced-motion behavior is defined
+- [ ] Haptics are intentional
+- [ ] No fake system chrome is animated
+- [ ] iOS and Android may use different mechanics while preserving the same intent
+- [ ] The motion fits the product register
+- [ ] Complex effects are rare enough to justify their implementation/performance cost
+
+The goal is not more animation. The goal is clearer, more tactile, more coherent interaction.
