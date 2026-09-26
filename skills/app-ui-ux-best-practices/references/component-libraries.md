@@ -1,281 +1,287 @@
-# UI Component Libraries Reference
+# Native Platform Components Reference
 
-Complete catalog of recommended component libraries, organized by category and use case.
+This file replaces the old web/React component-library catalog.
 
-## Table of Contents
-
-1. [Desktop UI Component Libraries](#desktop-ui-component-libraries)
-2. [Mobile Component Libraries](#mobile-component-libraries)
-3. [Tailwind-Based Libraries](#tailwind-based-libraries)
-4. [Headless/Unstyled Libraries](#headlessunstyled-libraries)
-5. [Animation Libraries](#animation-libraries)
-6. [Icon Libraries](#icon-libraries)
-7. [Specialized Components](#specialized-components)
+The native design skill does not choose third-party UI kits by default. It starts from platform components and behaviors, then adds custom product components only where they create real value.
 
 ---
 
-## Desktop UI Component Libraries
+# 1. Principle: Platform Components Are Behavioral Contracts
 
-### Tier 1: Production-Ready (Recommended)
+A native component is more than appearance. It often includes:
+- touch behavior
+- focus behavior
+- accessibility semantics
+- text scaling
+- keyboard/pointer support
+- animation
+- selection behavior
+- platform conventions
+- localization behavior
 
-| Library | URL | Best For |
-|---------|-----|----------|
-| **shadcn/ui** | https://ui.shadcn.com/ | Modern React, full control |
-| **Radix UI** | https://www.radix-ui.com/ | Headless primitives |
-| **Mantine** | https://mantine.dev/ | Feature-rich React |
-| **Chakra UI** | https://chakra-ui.com/ | Accessible, themeable |
+Therefore, a visually similar custom control is not automatically equivalent.
 
-### Tier 2: Enterprise/Design System
-
-| Library | URL | Best For |
-|---------|-----|----------|
-| **Ant Design** | https://ant.design/ | Enterprise applications |
-| **Material-UI (MUI)** | https://mui.com/ | Material Design, B2B |
-| **Fluent UI** | https://developer.microsoft.com/en-us/fluentui | Microsoft ecosystem |
-| **Carbon Design** | https://carbondesignsystem.com/ | IBM ecosystem |
-| **Polaris** | https://polaris.shopify.com/ | Shopify ecosystem |
-| **Primer** | https://primer.style/react/ | GitHub ecosystem |
-
-### Tier 3: Specialized
-
-| Library | URL | Best For |
-|---------|-----|----------|
-| **Arco Design** | https://arco.design/ | ByteDance ecosystem |
-| **Semi Design** | https://semi.design/ | ByteDance alternative |
-| **TDesign** | https://tdesign.tencent.com/ | Tencent ecosystem |
-| **HeroUI (NextUI)** | https://heroui.com/ | Modern, beautiful defaults |
-| **origin-ui** | https://originui.com/ | Clean, minimal |
+Use native/system components when the task is standard. Customize appearance when useful. Replace behavior only when the product interaction genuinely differs.
 
 ---
 
-## Mobile Component Libraries
+# 2. iOS / iPadOS Component Families
 
-| Library | URL | Best For |
-|---------|-----|----------|
-| **Ant Design Mobile** | https://mobile.ant.design/ | React Native, Chinese market |
-| **React Vant** | https://react-vant.3lang.dev/ | Lightweight mobile |
-| **Ionic Framework** | https://ionicframework.com/ | Cross-platform |
-| **Framework7** | https://framework7.io/react/ | iOS/Android feel |
-| **Konsta UI** | https://konstaui.com/ | iOS/Material mobile |
+The implementation may be SwiftUI or UIKit. The design decision is the same.
 
----
+## Navigation
+- Navigation stack / hierarchical drill-down
+- Tab bar for peer top-level destinations
+- Sidebar / split view on iPad and larger layouts
+- Search integrated into navigation where appropriate
+- Toolbars for contextual actions
+- Popovers for contextual presentation on larger devices
 
-## Tailwind-Based Libraries
+## Presentation
+- Sheet
+- Full-screen modal
+- Alert
+- Confirmation dialog
+- Popover
+- Context menu
+- Activity/share sheet
 
-### Component Collections
+## Actions and selection
+- Button
+- Menu
+- Toggle / Switch
+- Segmented control
+- Picker
+- Date/time picker
+- Stepper
+- Slider
 
-| Library | URL | Best For |
-|---------|-----|----------|
-| **DaisyUI** | https://daisyui.com/ | Quick prototyping |
-| **Flowbite** | https://flowbite.com/ | Marketing sites |
-| **Tailwind Elements** | https://tailwind-elements.com/ | Feature-rich |
-| **Mamba UI** | https://mambaui.com/ | Templates |
-| **Meraki UI** | https://merakiui.com/ | Modern blocks |
+## Input
+- Text field
+- Secure field
+- Text view / multiline input
+- Search field
 
----
+## Content
+- List
+- Table/collection-style grids
+- Scroll view
+- Disclosure groups / expandable content
+- Progress indicators
+- Badges
+- SF Symbols / custom symbols
 
-## Headless/Unstyled Libraries
+## Media
+- Image
+- Video/player surfaces
+- Photo/media pickers
+- Map
 
-Best for custom design systems with full styling control.
-
-| Library | URL | Description |
-|---------|-----|-------------|
-| **Radix UI** | https://www.radix-ui.com/ | Best accessibility |
-| **Headless UI** | https://headlessui.com/ | Tailwind-focused |
-| **Ariakit** | https://ariakit.org/ | WAI-ARIA compliant |
-| **Base UI** | https://mui.com/base-ui/ | MUI's unstyled layer |
-| **Ark UI** | https://ark-ui.com/ | Framework agnostic |
-
----
-
-## Animation Libraries
-
-### General Animation
-
-| Library | URL | Best For |
-|---------|-----|----------|
-| **Framer Motion** | https://www.framer.com/motion/ | React, declarative |
-| **React Spring** | https://www.react-spring.dev/ | Physics-based |
-| **Auto Animate** | https://auto-animate.formkit.com/ | Zero-config |
-| **Anime.js** | https://animejs.com/ | Vanilla JS |
-
-### Micro-interactions
-
-| Library | URL | Best For |
-|---------|-----|----------|
-| **Lottie React** | https://github.com/Gamote/lottie-react | After Effects animations |
-| **React Flip Toolkit** | https://github.com/aholachek/react-flip-toolkit | FLIP animations |
-| **AOS** | https://michalsnik.github.io/aos/ | Scroll animations |
-
-### Loading States
-
-| Library | URL | Description |
-|---------|-----|-------------|
-| **react-spinners** | https://www.davidhu.io/react-spinners/ | Spinner collection |
-| **react-loading-skeleton** | https://github.com/dvtng/react-loading-skeleton | Skeleton screens |
-| **React Content Loader** | https://github.com/danilowoz/react-content-loader | SVG skeletons |
-| **NProgress** | https://ricostacruz.com/nprogress/ | Progress bar |
+### iOS design rule
+Do not redraw system controls simply to prove that the app has a custom visual identity. Express brand more strongly through content surfaces, imagery, type, color, and domain-specific components.
 
 ---
 
-## Icon Libraries
+# 3. Android Component Families
 
-### Tier 1: Top Recommendations
+The implementation may be Jetpack Compose or Android Views/XML.
 
-| Library | URL | Style | Aesthetic Skew |
-|---------|-----|-------|----------------|
-| **Heroicons** | https://heroicons.com/ | Tailwind official | Apple-clean |
-| **Lucide React** | https://lucide.dev/ | Clean lines | Technical / geometric |
-| **Phosphor Icons** | https://phosphoricons.com/ | 6 weights | Warm / duotone-capable |
-| **Tabler Icons** | https://tabler-icons.io/ | 5000+ free | Broad / utility |
+## Navigation
+- Navigation bar
+- Navigation rail
+- Navigation drawer
+- Top app bar
+- Tabs as secondary navigation
+- System back / predictive back
 
-> **Note:** Heroicons, Lucide, and Phosphor are equally capable — pick based on aesthetic fit, not ranking. Lucide skews technical/geometric; Phosphor skews warm/duotone-capable; Heroicons skews Apple-clean.
+## Presentation
+- Modal bottom sheet
+- Side sheet where appropriate
+- Dialog
+- Snackbar
+- Menu
+- Tooltip
 
-### Platform-Specific
+## Actions and selection
+- Button variants
+- Icon button
+- Floating action button
+- Switch
+- Checkbox
+- Radio button
+- Segmented/button groups where appropriate
+- Slider
 
-| Library | URL | Use Case |
-|---------|-----|----------|
-| **SF Symbols** | Apple official | iOS/macOS apps |
-| **Material Icons** | https://fonts.google.com/icons | Android/Material |
+## Input
+- Text field
+- Search
+- Date/time picker
 
-### React Integration
+## Content
+- List item
+- Card
+- Lazy/recycler list/grid
+- Progress indicator
+- Badge/chip
 
-| Library | URL | Description |
-|---------|-----|-------------|
-| **React Icons** | https://react-icons.github.io/react-icons/ | Collection of all major icon sets |
-| **Iconoir** | https://iconoir.com/ | Minimal line icons |
+## Media
+- Image
+- Video/player surfaces
+- Photo/media picker
+- Map
 
-### Icon Selection by Design Style
-
-| Design Style | Recommended Icon Library |
-|--------------|-------------------------|
-| Minimal/Precise | Heroicons, Lucide |
-| Soft/Friendly | Phosphor (Regular) |
-| Bold/Impactful | Tabler Icons |
-| iOS/Apple | SF Symbols |
-| Material/Android | Material Icons |
-
----
-
-## Specialized Components
-
-### Tables & Data Grids
-
-| Library | URL | Best For |
-|---------|-----|----------|
-| **TanStack Table** | https://tanstack.com/table/ | Headless, flexible |
-| **Material React Table** | https://www.material-react-table.com/ | MUI integration |
-| **react-data-grid** | https://adazzle.github.io/react-data-grid/ | Excel-like |
-
-### Charts & Visualization
-
-| Library | URL | Best For |
-|---------|-----|----------|
-| **Recharts** | https://recharts.org/ | Declarative React |
-| **Nivo** | https://nivo.rocks/ | Beautiful defaults |
-| **Visx** | https://airbnb.io/visx/ | Low-level, D3-based |
-| **Chart.js** | https://react-chartjs-2.js.org/ | Simple, familiar |
-| **VChart** | https://www.visactor.io/vchart | ByteDance, feature-rich |
-
-### Forms & Inputs
-
-| Library | URL | Best For |
-|---------|-----|----------|
-| **react-select** | https://react-select.com/ | Custom selects |
-| **react-datepicker** | https://reactdatepicker.com/ | Date picking |
-| **React Colorful** | https://github.com/omgovich/react-colorful | Color picker |
-| **react-dropzone** | https://react-dropzone.js.org/ | File uploads |
-| **emoji-mart** | https://github.com/missive/emoji-mart | Emoji picker |
-
-### Modals & Dialogs
-
-| Library | URL | Best For |
-|---------|-----|----------|
-| **nice-modal-react** | https://github.com/eBay/nice-modal-react | Imperative modals |
-| **react-modal** | https://github.com/reactjs/react-modal | Simple modal |
-| **Floating UI** | https://floating-ui.com/ | Popovers, tooltips |
-
-### Toast & Notifications
-
-| Library | URL | Style |
-|---------|-----|-------|
-| **Sonner** | https://sonner.emilkowal.ski/ | Modern, minimal |
-| **react-hot-toast** | https://react-hot-toast.com/ | Lightweight |
-| **react-toastify** | https://fkhadra.github.io/react-toastify/ | Feature-rich |
-
-### Drag & Drop
-
-| Library | URL | Best For |
-|---------|-----|----------|
-| **dnd-kit** | https://dndkit.com/ | Modern, accessible |
-| **react-beautiful-dnd** | https://github.com/atlassian/react-beautiful-dnd | Kanban-style |
-| **react-grid-layout** | https://github.com/react-grid-layout/react-grid-layout | Dashboard layouts |
-
-### Carousels & Sliders
-
-| Library | URL | Best For |
-|---------|-----|----------|
-| **Swiper** | https://swiperjs.com/react | Touch-friendly |
-| **Embla Carousel** | https://www.embla-carousel.com/ | Lightweight |
-| **keen-slider** | https://keen-slider.io/ | Performant |
-
-### Image & Media
-
-| Library | URL | Best For |
-|---------|-----|----------|
-| **react-photo-view** | https://github.com/MinJieLiu/react-photo-view | Lightbox |
-| **React Medium Image Zoom** | https://github.com/rpearce/react-medium-image-zoom | Zoom effect |
-| **react-player** | https://github.com/cookpete/react-player | Video player |
-| **React BlurHash** | https://github.com/woltapp/blurhash | Image placeholders |
-
-### Virtual Lists
-
-| Library | URL | Best For |
-|---------|-----|----------|
-| **react-virtuoso** | https://virtuoso.dev/ | Variable height |
-| **TanStack Virtual** | https://tanstack.com/virtual/ | Flexible |
-| **react-window** | https://github.com/bvaughn/react-window | Lightweight |
-
-### Layout Components
-
-| Library | URL | Best For |
-|---------|-----|----------|
-| **react-resizable-panels** | https://github.com/bvaughn/react-resizable-panels | Split panes |
-| **Allotment** | https://github.com/johnwalley/allotment | Resizable panels |
-| **react-responsive-masonry** | https://github.com/cedricdelpoux/react-responsive-masonry | Masonry grid |
+### Android design rule
+Material 3 provides a strong default behavior model, but the app does not have to visually look like an untouched sample app. Customize color, typography, shape, imagery, composition, and product-specific components while retaining predictable behavior.
 
 ---
 
-## CSS-in-JS Libraries
+# 4. SwiftUI vs UIKit
 
-| Library | URL | Best For |
-|---------|-----|----------|
-| **Tailwind CSS** | https://tailwindcss.com/ | Utility-first |
-| **Styled Components** | https://styled-components.com/ | CSS-in-JS |
-| **Emotion** | https://emotion.sh/ | Performant CSS-in-JS |
-| **CVA** | https://cva.style/ | Variant management |
-| **Tailwind Variants** | https://www.tailwind-variants.org/ | Tailwind + variants |
-| **Panda CSS** | https://panda-css.com/ | Build-time CSS-in-JS |
+Do not design separate UI systems for SwiftUI and UIKit.
+
+They may differ in:
+- available APIs
+- transition capabilities
+- hosting/migration constraints
+- exact implementation of custom drawing
+- version availability
+
+But the design spec should remain shared:
+- same semantic roles
+- same hierarchy
+- same touch targets
+- same accessibility behavior
+- same motion intent
+- same navigation model
+
+If a visual effect is dramatically harder in one framework, flag implementation risk rather than silently weakening the design.
 
 ---
 
-## Library Selection Guide
+# 5. Compose vs Views/XML
 
-**IMPORTANT**: Do NOT mechanically pick libraries from the table below. First define your "Feeling Keywords" and "Material Metaphor", then ask yourself: **Which library's default aesthetic is closest to the feeling I want?** If no perfect match exists, prefer Headless libraries (e.g., Radix) + custom styling.
+Likewise, do not design separate products for Compose and Views.
 
-### By Project Type (Reference Only — pick the stack whose aesthetic fits, not the first row)
+They may differ in:
+- layout APIs
+- animation APIs
+- accessibility semantics APIs
+- component implementations
+- migration constraints
 
-| Project | Equal-Tier Stack Options (pick one based on aesthetic fit) |
-|---------|-------------|
-| **SaaS Dashboard** | shadcn/ui + Radix + TanStack Table · OR · Mantine + Radix + TanStack Table · OR · HeroUI + Headless UI + TanStack Table · OR · Ariakit + Tailwind + TanStack Table |
-| **Marketing Site** | Tailwind + Framer Motion · OR · Astro + Tailwind + Motion One · OR · Next.js + CSS Modules + GSAP |
-| **Enterprise App** | Ant Design · OR · MUI · OR · Mantine · OR · Fluent UI |
-| **Consumer Mobile** | Ionic · OR · Ant Design Mobile · OR · Tamagui (React Native) · OR · NativeBase |
+The design system should remain the same.
 
-> These are equal-tier alternatives, not fallbacks. Match the stack's default aesthetic to your "Feeling Keywords" — do not default to the first option out of habit.
+If an effect is only practical in one stack, document the constraint explicitly before changing the product behavior.
 
-### Selection Principles
+---
 
-1. **Feeling First**: Library choice must serve the "feeling", not follow industry templates
-2. **Headless First**: For high customization, prefer Radix/Headless UI + custom Tailwind
-3. **Consistency First**: Once you pick a main library, avoid mixing multiple design systems
+# 6. Third-Party Component Libraries
+
+Do not introduce a third-party UI library merely because it is fashionable.
+
+A third-party component is justified when it provides:
+- a complex domain control
+- mature accessibility
+- large implementation savings
+- behavior not readily available from the platform
+
+Before recommending one, verify:
+- active maintenance
+- platform/version compatibility
+- accessibility behavior
+- customization limits
+- licensing
+- performance
+- dependency cost
+
+The design skill should not hardcode a library choice without current project context.
+
+---
+
+# 7. Platform-Specific Icon Sources
+
+## iOS
+Prefer SF Symbols when:
+- a suitable semantic symbol exists
+- the symbol matches the intended action
+- localization/direction variants help
+- system consistency matters
+
+Custom product symbols are appropriate for:
+- domain concepts
+- brand-specific actions
+- concepts missing from SF Symbols
+
+## Android
+Prefer Material Symbols or a coherent product icon set when:
+- they match standard Android semantics
+- the chosen visual weight fits the product
+
+Custom icons are appropriate for domain-specific concepts.
+
+Do not mix multiple icon languages casually.
+
+See `icon-guidelines.md`.
+
+---
+
+# 8. Component Selection Heuristics
+
+Ask in order:
+
+1. Is this a standard platform task?
+2. Is there a native component/pattern that already communicates it?
+3. Can the native component be styled sufficiently?
+4. If not, what exact product value is gained by custom behavior?
+5. Can the custom version preserve accessibility and system expectations?
+
+If questions 4–5 do not have strong answers, stay native.
+
+---
+
+# 9. Examples
+
+## Settings toggle
+
+Correct design logic:
+- This is an immediate boolean preference.
+- Use a switch/toggle pattern.
+- Keep label readable at large text sizes.
+- Announce state to screen readers.
+- Whole-row tapping may be acceptable if it does not conflict with nested controls.
+
+Do not invent:
+- swipe-to-toggle cards
+- hold-to-confirm
+- animated knobs with nonstandard meanings
+
+## Destructive action
+
+Correct design logic:
+- clear destructive label
+- appropriate red/destructive semantic role
+- confirmation only when needed
+- undo when practical
+
+Do not use an unlabeled trash icon as the only path when the consequence is significant.
+
+## Item detail
+
+Correct design logic:
+- hierarchical navigation if the item is part of a collection
+- sheet only when the task is temporary/contextual
+
+Do not use a bottom sheet solely because bottom sheets look modern.
+
+---
+
+# 10. Quality Gate
+
+A component choice is sound when:
+- the user recognizes the interaction
+- the platform handles ordinary behavior naturally
+- custom styling supports the brand
+- accessibility survives customization
+- large text/localization survive
+- iOS and Android differences are intentional
+- the choice can be implemented in SwiftUI/UIKit or Compose/Views without changing product meaning
