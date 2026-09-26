@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-REPO_SLUG="touchine-ojo/OJO-Design-Skills"
+REPO_SLUG="iknowshitaboutcoding/OJO-Design-Skills"
 # New canonical env var names; fall back to the legacy OJO_UI_UX_SKILLS_* names
 # so existing user/CI config keeps working after the rename.
 REF="${OJO_DESIGN_SKILLS_REF:-${OJO_UI_UX_SKILLS_REF:-main}}"
@@ -18,7 +18,7 @@ usage() {
   cat <<'EOF'
 Usage:
   scripts/install.sh [options]
-  curl -fsSL https://raw.githubusercontent.com/touchine-ojo/OJO-Design-Skills/main/scripts/install.sh | bash -s -- --target codex
+  curl -fsSL https://raw.githubusercontent.com/iknowshitaboutcoding/OJO-Design-Skills/main/scripts/install.sh | bash -s -- --target codex
 
 Options:
   --target <name>      codex, claude-code, zcode, deepcode, workbuddy, opencode, or generic. Default: codex
