@@ -93,21 +93,22 @@ Generate keywords in the user's language that capture brand essence.
 ### Material Translation Examples
 
 **Glass → Visual Properties:**
-- High transparency values (opacity: 0.85-0.95)
-- Subtle border highlights (1px rgba(255,255,255,0.1))
-- Light refraction effects (gradient borders)
+- High but readable translucency
+- Subtle edge highlights rather than heavy borders
+- Light refraction / tonal shifts where native rendering supports them
 - Clean, crisp edges
+- Foreground content must retain contrast in light and dark appearance
 
 **Paper → Visual Properties:**
-- Soft shadows (offset-y: 2-4px, blur: 8-12px)
-- Warm background tints (#FAFAF9, #F8F7F5)
-- Subtle texture overlays (noise at 2-3% opacity)
-- Slightly irregular edges (border-radius variation)
+- Soft, low perceived elevation
+- Warm off-white surface roles
+- Subtle texture overlays
+- Slightly irregular or tactile edge treatment where the register supports it
 
 **Liquid Metal → Visual Properties:**
-- Gradient backgrounds (subtle, directional)
-- High reflectivity (glossy elements)
-- Smooth transitions (300-400ms duration)
+- Subtle directional tonal gradients
+- Higher reflectivity and sharper highlights
+- Smooth, controlled transitions
 - Seamless component connections
 
 ---
@@ -145,16 +146,16 @@ Generate keywords in the user's language that capture brand essence.
 ### Environment Translation Examples
 
 **California Beach at Sunset → Visual Properties:**
-- Warm background tints (#FFF9F5, #FFFAF0)
-- Golden accent colors (#F59E0B, #FB923C)
-- Soft, long shadows (offset-y: 8-12px)
-- Low contrast ratios (comfortable, not stark)
+- Warm off-white / sand-tinted surface roles
+- Golden or amber accents
+- Soft, broad perceived elevation
+- Gentle tonal contrast while still meeting accessibility needs
 
 **Nordic Winter Interior → Visual Properties:**
-- Cool neutral backgrounds (#FAFBFC, #F8F9FA)
-- Crisp, short shadows (offset-y: 1-2px, minimal blur)
-- High contrast text (#18181B on white)
-- Cool accent colors (#0EA5E9, #06B6D4)
+- Cool neutral surface roles
+- Crisp, restrained depth cues
+- Strong text/surface contrast
+- Cool blue/cyan accents
 
 **Midnight Jazz Club → Visual Properties:**
 - Very dark backgrounds (#0A0A0A, #1A1A1A)
@@ -245,8 +246,8 @@ How light interacts with the material surface.
 - Texture through subtle noise overlay (2-3% opacity)
 
 **Satin Materials (Brushed Metal, Stone):**
-- Subtle directional gradient (5-10% lightness variation)
-- Soft highlight on top edge (1px lighter border-top)
+- Subtle directional lightness variation
+- Fine edge highlight
 - Low-key reflectivity
 
 **Glossy Materials (Glass, Liquid Metal, Polished Stone):**
@@ -278,19 +279,19 @@ Physical presence and weight.
 Overall temperature and atmosphere.
 
 **Warm Environments (Beach, Library, Jazz Club):**
-- Background tints with yellow/orange undertone (#FFFAF0, #FFF9F5)
-- Shadow colors with warm cast (rgba(200,150,100,0.1))
-- Accent colors in warm spectrum (orange, amber, yellow)
+- Background/surface roles with a yellow or orange undertone
+- Depth cues may carry a subtle warm cast
+- Accent colors can favor orange, amber, or yellow
 
 **Cool Environments (Nordic, Gallery, Rainy City):**
-- Background tints with blue undertone (#F8F9FA, #F5F7FA)
-- Shadow colors with cool cast (rgba(100,120,150,0.1))
-- Accent colors in cool spectrum (blue, cyan, indigo)
+- Background/surface roles with a blue undertone
+- Depth cues may carry a subtle cool cast
+- Accent colors can favor blue, cyan, or indigo
 
 **Neutral Environments (Forest, Desert):**
-- Pure gray backgrounds (#FAFAFA, #F5F5F5)
-- Neutral shadow colors (rgba(0,0,0,0.1))
-- Accent colors from any spectrum (context-dependent)
+- Neutral surface roles
+- Neutral depth cues
+- Accent color chosen from product context rather than a fixed spectrum
 
 ---
 
@@ -316,16 +317,17 @@ Use this template to document your material metaphor before passing to visual-to
 - **Rationale:** [why this matches the metaphor]
 
 ### Depth Expression
-- **Method:** [Drop Shadow / Blur / Opacity Layers / Border Only]
+- **Method:** [Shadow/Elevation / Native Material or Blur / Opacity Layers / Tonal or Stroke Separation]
 - **Hierarchy Levels:**
-  - Level 0 (Background): [shadow-none / no blur]
-  - Level 1 (Content): [shadow-sm / backdrop-blur-sm]
-  - Level 2 (Floating): [shadow-lg / backdrop-blur-md]
+  - Level 0 (Background): [flat base surface]
+  - Level 1 (Content): [subtle separation]
+  - Level 2 (Floating): [clear presentation-layer separation]
 
 ### Edge Treatment
-- **Primary Radius:** [rounded-lg / rounded-xl / rounded-none]
-- **Secondary Radius:** [rounded-full for badges, etc.]
-- **Rationale:** [why this matches the feeling]
+- **Control Geometry:** [sharp / subtle / soft / pill when semantically appropriate]
+- **Container Geometry:** [role-appropriate geometry]
+- **Media Geometry:** [content-appropriate geometry]
+- **Rationale:** [why these roles match the feeling and platform]
 
 ## 4. Micro-Detail Polish
 
