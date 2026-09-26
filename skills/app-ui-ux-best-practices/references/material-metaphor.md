@@ -187,43 +187,47 @@ Generate keywords in the user's language that capture brand essence.
 
 ### 4.2 Depth Expression
 
-| Method | Effect | Material Match | Tailwind Example |
-|--------|--------|----------------|------------------|
-| **Drop Shadow** | Floating above surface, clear separation | Paper, cards, layered UI | shadow-sm, shadow-md, shadow-lg |
-| **Blur/Defocus** | Depth of field, atmospheric | Glass, translucent materials, overlays | backdrop-blur-sm, backdrop-blur-md |
-| **Opacity Layers** | Stacking transparency, subtle depth | Liquid, glass, modern minimalism | bg-white/10, bg-black/5 |
-| **Border Only** | Outline definition, no elevation | Flat aesthetics, line art, technical precision | border border-gray-200 |
+| Method | Effect | Material Match | Native interpretation |
+|--------|--------|----------------|-----------------------|
+| **Shadow / Elevation** | Floating above a surface, clear separation | Paper, cards, layered UI | Use platform-appropriate shadow/elevation; keep values semantic rather than CSS-specific |
+| **Blur / Material** | Depth of field, atmospheric separation | Glass, translucent materials, overlays | Use native material/blur capabilities only where foreground contrast remains strong |
+| **Opacity Layers** | Stacking transparency, subtle depth | Liquid, glass, layered content | Define semantic surface opacity; verify light/dark and contrast behavior |
+| **Stroke / Tonal Edge** | Outline definition without strong elevation | Flat aesthetics, technical precision | Use separator/outline roles rather than adding shadows by default |
 
 ### Depth Hierarchy System
 
-Define 3 elevation levels for your design:
+Define a small number of perceived depth roles.
 
 **Example System (Paper + Library):**
-- Level 0 (Background): No shadow, base color
-- Level 1 (Content Cards): shadow-sm (0 1px 2px rgba(0,0,0,0.05))
-- Level 2 (Floating Modals): shadow-lg (0 10px 15px rgba(0,0,0,0.1))
+- Level 0 (Background): flat base surface
+- Level 1 (Content): slight tonal/shadow separation
+- Level 2 (Presentation): clearly elevated sheet/popover/modal surface
 
 **Example System (Glass + Gallery):**
-- Level 0 (Background): backdrop-blur-none
-- Level 1 (Panels): backdrop-blur-sm + border-white/10
-- Level 2 (Overlays): backdrop-blur-md + border-white/20
+- Level 0 (Background): opaque or minimally translucent base
+- Level 1 (Panel): restrained native material/blur with clear edge separation
+- Level 2 (Overlay): stronger separation while preserving text/control contrast
 
 ### 4.3 Edge Treatment
 
-| Type | Radius | Feeling | Best For | Tailwind Class |
-|------|--------|---------|----------|----------------|
-| **Sharp** | 0px | Technical, Modern, Precise | Developer tools, data dashboards, geometric | rounded-none |
-| **Subtle** | 4-8px | Professional, Balanced, Refined | Business apps, productivity, neutral tone | rounded, rounded-md |
-| **Soft** | 12-20px | Friendly, Approachable, Comfortable | Consumer apps, social, wellness | rounded-xl, rounded-2xl |
-| **Full Round** | 50% / pill | Playful, Casual, Organic | Games, children's apps, casual social | rounded-full |
+| Type | Geometry | Feeling | Best For |
+|------|----------|---------|----------|
+| **Sharp** | square / near-square | Technical, precise, graphic | developer tools, data surfaces, raw/editorial systems |
+| **Subtle** | small radius | Professional, balanced | productivity, utilities, restrained brand systems |
+| **Soft** | medium/large radius | Friendly, tactile | consumer, social, wellness when supported by the register |
+| **Full Round** | circular / pill | Playful or compact semantic grouping | tags, badges, avatars, selected capsules when appropriate |
 
 ### Edge Consistency Rule
 
-Pick ONE primary radius for buttons/cards, optionally one secondary for smaller elements (badges, tags).
+Define geometry by **role**, not one radius for the whole app.
 
-**Example:**
-- Primary (buttons, cards): rounded-lg (8px)
-- Secondary (badges, avatars): rounded-full
+Example:
+- controls: one family
+- content containers: another when needed
+- media: may follow image/content geometry
+- badges/avatars: circular or pill when semantically appropriate
+
+When using native system components, respect their platform geometry unless a custom treatment is justified.
 
 ---
 
@@ -255,19 +259,19 @@ How light interacts with the material surface.
 Physical presence and weight.
 
 **Light Materials (Paper, Fabric):**
-- Short shadow offset (1-2px)
-- High blur ratio (blur = 4x offset)
-- Hover lifts easily (translate-y: -2px)
+- light perceived elevation
+- soft separation
+- press/selection feedback may feel quick and low-mass
 
 **Medium Materials (Glass, Ceramic):**
-- Medium shadow offset (2-4px)
-- Moderate blur (blur = 3x offset)
-- Hover lifts moderately (translate-y: -1px)
+- moderate perceived elevation
+- controlled separation
+- press/selection feedback can feel damped and precise
 
 **Heavy Materials (Metal, Stone):**
-- Longer shadow offset (4-8px)
-- Lower blur ratio (blur = 2x offset)
-- Minimal hover lift (translate-y: -0.5px)
+- stronger visual mass
+- firmer edges or weightier depth cues
+- interaction feedback should feel decisive rather than floaty
 
 ### 5.3 Ambient Warmth
 
@@ -384,5 +388,5 @@ Once Material Brief is complete:
 
 1. Review with user - confirm the metaphor feels right
 2. Invoke design-tokens skill - pass the Material Brief as input
-3. Design-tokens translates physical properties into CSS/design tokens
+3. Design-tokens translates physical properties into semantic native design tokens
 4. Continue workflow: design-tokens → component-recipe → motion-system → design-audit
