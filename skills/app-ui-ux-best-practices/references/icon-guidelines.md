@@ -1,106 +1,230 @@
-# Icon Guidelines
+# Native Icon Guidelines
 
-## 🚨 Golden Rule: ONE Library, ONE Style, ZERO Exceptions
+Icons in native apps are functional language first and visual style second.
 
-**Every icon in the app MUST come from the SAME icon library and use the SAME style.**
-
-| Aspect | Rule | Example |
-|--------|------|---------|
-| **Library** | Pick ONE and stick to it | Heroicons, Lucide, Phosphor, SF Symbols, Material Symbols |
-| **Style** | ALL icons use same style | All Outline OR All Filled — NEVER mix |
-| **Stroke Weight** | Consistent across all icons | 1.5px or 2px — pick one |
-| **Size Grid** | Same base size | 24×24px (scale proportionally) |
-| **Corner Radius** | Match icon library's default | Don't modify individual icons |
+The goal is consistency, recognizability, accessibility, and platform fit — not novelty for its own sake.
 
 ---
 
-## ⛔ Banned Patterns (Instant Rejection)
+# 1. One Coherent Icon Language Per Platform Surface
 
-### Consistency Violations
+Do not casually mix:
+- SF Symbols
+- Material Symbols
+- Lucide
+- Heroicons
+- Phosphor
+- emoji
+- custom filled icons
 
-| Pattern | Why It's Wrong | Fix |
-|---------|---------------|-----|
-| **Mixed styles** (outline + filled) | Looks like random icon dump | Unify to one style |
-| **Mixed libraries** (e.g., Lucide + FontAwesome, or Heroicons + Phosphor) | Inconsistent visual weight | Pick one library |
-| **Mixed stroke weights** (1px + 2px + 3px) | Visual chaos | Standardize stroke |
+inside the same product surface.
 
-### Visual Effects (NEVER Use)
-
-| Pattern | Why It's Wrong |
-|---------|---------------|
-| **Neon glow effects** (霓虹发光) | Cheap, dated, "AI-generated" look |
-| **Rainbow/multi-color gradients** | Visual noise, unprofessional |
-| **Plastic 3D with shiny highlights** | Skeuomorphic relic |
-| **Star decorations** (✨) | Decorative clutter |
-| **Gradient fills** | Hard to maintain, dated |
-| **Colored icons in toolbar** | Breaks visual hierarchy |
-
-### Source Violations
-
-| Pattern | Why It's Wrong |
-|---------|---------------|
-| **Flaticon/Freepik free icons** | Inconsistent styles, licensing issues |
-| **AI-generated icons** | Inconsistent, often broken details |
-| **Emoji as functional icons** (🏠 ❤️ ⚙️) | Unprofessional, uncontrollable rendering |
+A product can use custom domain icons alongside platform symbols, but the visual system should define:
+- optical size
+- stroke/weight
+- fill policy
+- corner character
+- baseline/alignment
+- selected/unselected treatment
 
 ---
 
-## Zero-Emoji UI Rule
+# 2. iOS / iPadOS
 
-Do not use emoji anywhere as visible UI, including:
-- stats cards (`❤️`, `✨`, `⭐`)
-- settings rows (`👻`, `🔒`, `🛡️`, `🔔`, `❓`)
-- tab bars, profile actions, empty states, badges, status indicators, or button labels
-- mock data strings that render on screen
+Prefer **SF Symbols** when a suitable semantic symbol exists.
 
-Replace emoji with a single coherent icon system. Prefer clean SVG icons (any of Heroicons / Lucide / Phosphor — all equal-tier; choose by aesthetic fit) with consistent stroke width, size, and color token usage. If an icon library is unavailable, use a small matching inline SVG set rather than Unicode emoji or random symbols.
+Benefits:
+- native optical behavior
+- weight/scale integration
+- accessibility/localization support for many symbols
+- directional variants where appropriate
+- familiar meaning
 
----
+Use custom symbols for:
+- domain-specific concepts
+- brand-specific objects
+- actions with no suitable SF Symbol
 
-## ✅ Recommended Icon Libraries
+Do not replace familiar platform symbols merely to appear unique.
 
-| Library | Style Options | Best For |
-|---------|--------------|----------|
-| **Heroicons** | Outline (1.5px), Solid | Tailwind CSS projects |
-| **Lucide** | Outline (1.5px default) | Web apps, React projects |
-| **Phosphor** | 6 weights (thin→bold) | Flexible design systems |
-| **SF Symbols** | Outline, Filled, Hierarchical | iOS/macOS native apps |
-| **Material Symbols** | Outline, Rounded, Sharp | Android, Material Design |
+Examples of concepts that usually benefit from familiar symbols:
+- search
+- share
+- add
+- delete
+- back/disclosure
+- settings
+- camera
+- refresh
 
-> **Heroicons, Lucide, and Phosphor are three equal-tier options** — none is "the default". Choice should be driven by aesthetic fit: Heroicons skews Apple-clean, Lucide skews technical/geometric, Phosphor skews warm/duotone-capable. SF Symbols and Material Symbols are platform-specific and not interchangeable with the web trio.
-
----
-
-## Icon Color Rules
-
-| Context | Color Rule |
-|---------|-----------|
-| **Toolbar/Navigation** | Single color, inherit from `text-secondary` or theme |
-| **Active state** | Use `primary` color |
-| **Disabled state** | Use `text-disabled` with reduced opacity |
-| **Decorative/Empty state** | Can use `text-tertiary` or subtle tint |
+Brand novelty belongs more naturally in domain-specific iconography than in reinventing universal actions.
 
 ---
 
-## Quality Standards
+# 3. Android
 
-| Property | Requirement |
-|----------|-------------|
-| **Color** | Single color, no effects |
-| **Stroke** | 1.5-2px consistent |
-| **Size** | 24×24px base grid |
-| **Style** | Outline OR Filled (not mixed) |
+Prefer **Material Symbols** or another coherent Android-appropriate product set for common actions when it fits the visual direction.
+
+Use custom icons for:
+- domain-specific concepts
+- brand-specific objects
+- concepts not represented well by standard symbols
+
+Do not import SF Symbols into Android as a generic icon system.
 
 ---
 
-## Pre-Flight Checklist
+# 4. Cross-Platform Products
 
-Before finalizing any UI, verify:
+Do not require the same glyph file on both platforms.
 
-- [ ] All icons from same library?
-- [ ] All icons same style (outline/filled)?
-- [ ] All icons same stroke weight?
-- [ ] No emoji or random Unicode symbols used anywhere in visible UI?
-- [ ] No neon/glow/gradient effects?
-- [ ] No AI-generated or Flaticon icons?
-- [ ] Active/inactive states use consistent color logic?
+Share the **semantic icon role**:
+- search
+- settings
+- favorite
+- filter
+- sort
+- share
+- destructive
+- disclosure
+- domain-specific object
+
+Then choose the platform-appropriate representation.
+
+The product can still feel coherent through:
+- similar visual weight
+- common brand/domain icons
+- shared semantic roles
+- consistent color and selection behavior
+
+---
+
+# 5. Icon Size vs Hit Target
+
+The visible glyph may be smaller than the touch region.
+
+Typical logic:
+- glyph: visually appropriate to surrounding text/control
+- hit target: large enough for reliable touch
+
+Do not enlarge the glyph until it looks clumsy simply to meet accessibility; enlarge the tappable region.
+
+---
+
+# 6. Filled vs Outline
+
+Use fill intentionally.
+
+Common patterns:
+- outline/unselected
+- filled/selected
+- filled for high-emphasis action
+- hierarchical/multicolor only when meaningful
+
+Do not mix filled and outline randomly across unrelated controls.
+
+---
+
+# 7. Weight
+
+Icon weight should coordinate with:
+- adjacent typography
+- control prominence
+- product register
+
+A heavy icon beside light body type can look visually detached.
+
+Avoid using the thinnest possible icon weight as a shortcut for "premium."
+
+---
+
+# 8. Color
+
+Icons normally inherit a semantic role:
+- primary
+- secondary
+- accent
+- destructive
+- disabled
+- selected
+
+Do not assign every icon a different decorative color.
+
+Do not communicate selection or error only through color.
+
+---
+
+# 9. Accessibility
+
+Interactive icons need:
+- meaningful accessible label
+- state/value announcement if toggleable
+- sufficient hit target
+- alternative text that describes action, not shape
+
+Bad accessible label:
+- "Magnifying glass"
+
+Good:
+- "Search"
+
+Decorative icons should not create screen-reader noise.
+
+---
+
+# 10. Badges and Status
+
+If an icon includes:
+- unread badge
+- sync state
+- warning
+- online/offline
+- recording/live state
+
+make sure the semantic state is available beyond the badge color/shape.
+
+---
+
+# 11. Emoji
+
+Do not use emoji as ordinary control icons by default.
+
+Problems:
+- rendering differs by OS/version
+- inconsistent baseline
+- unpredictable color/detail
+- weak control semantics
+
+Emoji are valid as content, reactions, or a deliberate expressive feature.
+
+---
+
+# 12. Custom Icon Quality
+
+Custom icons should define:
+- grid/keyline
+- stroke weight
+- corner treatment
+- optical corrections
+- filled variant behavior
+- selected state
+- light/dark behavior
+- RTL mirroring rules if directional
+- accessibility label
+
+Do not assume mathematically identical geometry looks optically aligned.
+
+---
+
+# 13. Quality Gate
+
+- [ ] One coherent icon language per surface
+- [ ] Platform-common actions remain recognizable
+- [ ] Custom icons are used where they add product value
+- [ ] Visual weight matches typography
+- [ ] Selection behavior is consistent
+- [ ] Touch target is larger than tiny glyphs when needed
+- [ ] Interactive icons have accessible names
+- [ ] Decorative icons are hidden from accessibility
+- [ ] Color is not the only state cue
+- [ ] iOS and Android are allowed to use different platform glyphs for the same semantic role
