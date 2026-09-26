@@ -296,7 +296,7 @@ Overall temperature and atmosphere.
 
 ## Material Brief Template
 
-Use this template to document your material metaphor before passing to design-tokens:
+Use this template to document your material metaphor before passing to visual-tokens:
 
 ```markdown
 # Material Brief: [Product Name]
@@ -342,7 +342,7 @@ Use this template to document your material metaphor before passing to design-to
 - [Background tint values]
 
 ## 5. Next Steps
-Pass this brief to design-tokens skill to translate into:
+Pass this brief to visual-tokens reference to translate into:
 - Color palette (with temperature from warmth)
 - Typography scale (with weight based on material)
 - Spacing system (with rhythm based on material)
@@ -387,6 +387,6 @@ Let these constraints guide design decisions toward coherence.
 Once Material Brief is complete:
 
 1. Review with user - confirm the metaphor feels right
-2. Invoke design-tokens skill - pass the Material Brief as input
+2. Invoke visual-tokens reference - pass the Material Brief as input
 3. Design-tokens translates physical properties into semantic native design tokens
-4. Continue workflow: design-tokens → component-recipe → motion-system → design-audit
+4. Continue workflow: visual-tokens → component-recipe → motion-system → design-audit
