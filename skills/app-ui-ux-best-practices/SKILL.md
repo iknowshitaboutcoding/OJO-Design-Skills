@@ -1,410 +1,664 @@
 ---
-name: app-ui-ux-best-practices
-description: "Comprehensive App UI/UX design best practices. Supports two tracks: Convention Track (adopt a proven design language for SaaS/utility products) and Innovation Track (multiple brand-driven design methodologies — Material Metaphor, archetype-driven, narrative-driven, cultural-semiotic — for brand-driven products). Use when users want to: (1) Define visual identity for a new product, (2) Create design specifications and tokens, (3) Establish UI component guidelines, (4) Build a cohesive design language, (5) Review UI/UX quality, (6) Refine existing designs, (7) Audit design quality. Triggers: 'design system', 'UI design', 'UX design', 'visual identity', 'design specs', 'design tokens', 'component guidelines', 'look and feel', 'app design', 'design refine', 'design audit', '视觉设计', '设计规范', '设计系统', 'UI最佳实践', 'UX最佳实践'."
+name: native-app-ui-ux-best-practices
+description: "Platform-aware native mobile UI/UX design methodology for iOS/iPadOS and Android. Preserves brand-driven visual direction, design tokens, motion, component states, and anti-AI-slop guardrails while grounding navigation, controls, accessibility, typography, safe areas, system chrome, and interaction behavior in Apple HIG and Android/Material guidance. Implementation targets may include SwiftUI, UIKit, Jetpack Compose, or Android Views/XML, but this skill defines design intent and native behavior rather than framework-specific code. Use for native app design systems, visual direction, UX architecture, component specifications, motion specs, design audits, or refinement."
 ---
 
-# App UI/UX Best Practices
+# Native App UI/UX Best Practices
 
-Create cohesive, professional UI design systems. For brand-driven products, pick a methodology that fits the brand — **Material Metaphor**, **archetype-driven**, **narrative-driven**, **cultural-semiotic**, or another approach grounded in research. For utility/SaaS products, adopt one proven design language directly (chosen from a wide pool, not a fixed shortlist). Both paths produce actionable design specifications.
+Design native mobile products that feel intentional, distinctive, and at home on their platform.
+
+This skill is a native-mobile adaptation of the OJO design methodology. It keeps the parts that improve design quality — register derivation, Convention vs Innovation tracks, anti-AI-slop guardrails, brand-driven visual direction, material metaphor, semantic tokens, motion purpose, and design audit — while removing web-specific assumptions such as Tailwind classes, DOM/ARIA requirements, browser breakpoints, hover-first interaction, fake device chrome, CSS performance rules, and web font sourcing.
+
+The output is a **design specification**, not a framework tutorial. SwiftUI, UIKit, Jetpack Compose, and Android Views/XML are implementation targets for the same design intent; do not let a framework's API shape the design unless the platform convention genuinely requires it.
+
+## Platform Authority
+
+When platform behavior matters, prefer current official guidance:
+
+- Apple Human Interface Guidelines: https://developer.apple.com/design/human-interface-guidelines/
+- Android design guidance: https://developer.android.com/design/ui/mobile/
+- Material 3 for Android: https://m3.material.io/
+- Android accessibility guidance: https://developer.android.com/guide/topics/ui/accessibility/
+
+If a reference app, concept shot, or old design pattern conflicts with current platform behavior, accessibility, safe areas, system navigation, or system controls, the platform constraint wins unless the deviation is deliberate, justified, and still usable.
+
+## Framework Boundary
+
+### iOS / iPadOS
+- **SwiftUI** and **UIKit** are implementation frameworks, not separate design languages.
+- The design spec should describe hierarchy, behavior, states, layout intent, typography roles, motion, accessibility, and platform semantics.
+- Only add SwiftUI/UIKit notes when implementation differences are material.
+- Do not produce different visual identities merely because one screen will be implemented in SwiftUI and another in UIKit.
+
+### Android
+- **Kotlin** is the language; **Jetpack Compose** and **Android Views/XML** are UI implementation systems.
+- The design language should remain consistent across Compose and Views/XML.
+- Prefer current Android/Material interaction and adaptive-layout conventions.
+- Only add Compose/View implementation notes when a design constraint depends on them.
+
+### Cross-platform products
+- Share product identity, information architecture, content model, semantic color intent, spacing rhythm, imagery, and brand principles.
+- Do **not** force pixel-identical UI across iOS and Android.
+- Platform navigation, control geometry, typography behavior, iconography, sheets/dialogs, back behavior, system bars, and motion may differ.
+- Preserve product identity through tokens and visual physics, not by redrawing one platform on top of the other.
 
 ## Core Design Philosophy
 
-**ISFP Designer Persona:** Approach every design decision as a sensory, instinct-driven act. Trust aesthetic intuition. Every pixel must earn its place through visual contribution, not just functional necessity.
+**Intentionality:** Nothing is arbitrary. Every color, shadow, radius, spacing value, icon choice, motion behavior, and custom control must serve the product, platform, or chosen visual direction.
 
-**Intentionality:** Nothing is arbitrary. Every color, shadow, radius, and spacing value must serve a clear purpose within the chosen visual direction.
+**Native familiarity before custom chrome:** Familiar platform behavior reduces cognitive load. Start from native interaction expectations and customize only where brand or product value earns the deviation.
 
-**Surprise within coherence:** The interface should feel familiar enough to use without friction, yet surprising enough to be memorable. Avoid generic patterns while maintaining usability.
+**Surprise within coherence:** A native app can be memorable without fighting the operating system. Put most brand expression into content, imagery, typography, color, composition, custom domain components, and rare high-value moments rather than rebuilding standard system behavior.
 
-**Material honesty:** Surfaces must convey a believable material reality — velvet-smooth frosted glass and torn photocopied paper are equally valid. Fidelity to the direction's material, not universal smoothness or polish.
+**Material honesty:** Surfaces can feel glassy, papery, metallic, soft, raw, printed, or editorial, but their visual physics must be coherent and must not interfere with legibility, touch, system contrast, or accessibility.
 
-**Real visual assets:** When a screen needs imagery, use real, subject-specific photographs, screenshots, product renders, map/media thumbnails, or generated bitmap assets that clearly depict the actual thing. Do not use gray boxes, "Image" labels, generic gradient blobs, fake stock smiles, or decorative SVGs as a substitute for real visual content.
+**Real visual assets:** When a screen needs imagery, use subject-specific photography, screenshots, product renders, maps/media thumbnails, illustrations, or generated bitmap assets that depict the actual thing. Do not substitute generic gradient blobs, fake stock smiles, or empty gray rectangles for meaningful content.
 
-**Rhythm over density dogma:** Whitespace and density are register decisions, not virtues. A quiet archival product earns silence; a gig poster earns collision and overlap. What matters is deliberate rhythm at the chosen density, in either direction.
+**Rhythm over density dogma:** Sparse and dense interfaces can both be excellent. Density must come from the product register and task, not from a universal "clean UI" default.
 
-## Style Register Derivation (Fit Before Diversity)
+**System behavior is part of the design:** Safe areas, system bars, keyboard, back behavior, Dynamic Type/font scaling, screen readers, reduced motion, dark mode, input method, and window size are not engineering cleanup tasks. They are design constraints from the start.
 
-Before exploring directions, derive the product's **register** from evidence — the product's subject matter, audience, brand voice, cultural context, and goal. Classify internally along five observable dials:
+---
+
+## Style Register Derivation
+
+Before visual exploration, derive a product **register** from evidence: subject matter, audience, brand voice, cultural context, task frequency, content density, and emotional goal.
 
 | Dial | Poles | Observable in |
 |---|---|---|
-| `Energy` | quiet ↔ loud | saturation budget, contrast, element collision |
-| `Finish` | raw ↔ polished | edge treatment, texture noise, alignment strictness |
-| `Density` | sparse ↔ dense | whitespace scale, layering, grid discipline |
-| `Weight` | light ↔ heavy | font weight, color-block area, shadow hardness |
-| `Seriousness` | playful ↔ solemn | corner radius, illustration language, motion amplitude |
+| Energy | quiet ↔ loud | saturation, contrast, collision, motion amplitude |
+| Finish | raw ↔ polished | edge treatment, texture, alignment strictness |
+| Density | sparse ↔ dense | whitespace, information packing, layering |
+| Weight | light ↔ heavy | type weight, color-block area, depth, visual mass |
+| Seriousness | playful ↔ solemn | radius, illustration language, copy, motion behavior |
 
 Rules:
-- **Every dial value must cite evidence** ("underground live venue → loud + raw + dense", "meditation companion → quiet + polished + sparse"). No dial may be set by habit or personal default. Quiet/polished is a fully legitimate outcome when the evidence earns it; so is loud/raw.
-- **Vague-word firewall**: mood adjectives — premium, refined, elegant, sophisticated, restrained, epic, literary, tasteful, 高级感, 精致, 克制, 史诗 — are never a justification. If one appears in the user's input or your own reasoning, translate it into dial values plus observable decisions (specific saturation, spacing, radius, motion values) before proceeding. See the translation table in `references/anti-patterns.md`.
-- **Fit before diversity**: when evidence clearly locks a register region (a rock band page, a funeral service, a toddler game), ALL direction options must sit inside that region and differentiate on the other axes. Do not average toward a middle register or "balance" the set with one polished-minimal option. Spread options across register levels only when the evidence is genuinely ambiguous.
-- Every downstream step — tokens, component recipes, motion, layout — takes its values from the derived register, not from a house default.
+- Every dial value must be justified by product evidence.
+- Vague adjectives such as premium, refined, elegant, sophisticated, restrained, epic, literary, tasteful, 高级感, 精致, 克制, 史诗 are not sufficient. Translate them into observable decisions.
+- Fit before diversity: when the product clearly occupies one register region, all proposed visual directions should stay within that region and vary on other axes.
+- Downstream tokens, components, motion, and layout derive from the register. Do not fall back to a house style.
 
-## Language Rule (HIGHEST PRIORITY - STRICTLY ENFORCED)
+## Language Rule
 
-- **MANDATORY:** Your output language MUST exactly match the parent agent's session-locked language (system prompt §9.1 — single source of truth). DO NOT independently detect from user-message snippets, contextSummary text, or any product context.
-- **NEVER default to English.** The session-locked language takes absolute precedence.
-- This rule applies to EVERY response, with ZERO exceptions.
-- Fallback only when no session lock is available: apply the system prompt §9.1 frame rule — strip proper nouns (brands, person names, product names, foreign loan-words), judge by the remaining grammatical frame.
+Match the parent session's language. If the session has a locked language, follow it exactly. Do not default to English merely because this reference is written in English.
 
-## Pre-Execution (Required Before Any Step)
+## Required Pre-Read
 
-**CRITICAL:** Before proceeding with any design work, you MUST read the following reference file:
+Before design work, read:
 
-- **`references/anti-patterns.md`** (MANDATORY) - Strictly avoid all banned patterns listed. This includes AI-generated style detection, banned color combinations/treatments, lazy stereotypes, and quality failures.
+- `references/anti-patterns.md`
 
-Additional reference files will be loaded on-demand per step as indicated in the workflow below.
-
-## Workflow Overview
-
-**Current year:** 2026. If using date keywords in searches, use 2026 unless users specify otherwise.
-
-**Both Tracks:**
-1. **Product Type Assessment** → Convention Track or Innovation Track
-2. **Inspiration Research** → Web search for references (MANDATORY)
-
-**Convention Track path:**
-3. **Style Direction Confirmation** → 2-3 options based on proven design systems → **WAIT for user selection**
-4. Design Tokens (read `references/visual-tokens.md`)
-5. Component Mapping (read `references/component-recipe.md`)
-6. Motion & Behavior (read `references/motion-system.md`)
-7. Layout Requirements
-8. Design Specs Output
-
-**Innovation Track path:**
-3. **Insight Discovery** → Feeling keywords
-4. **Style Direction Confirmation** → 2-3 options grounded in the chosen brand-driven methodology → **WAIT for user selection**
-5. Brand-Driven Methodology & Visual Physics — pick ONE: Material Metaphor (read `references/material-metaphor.md`), archetype-driven, narrative-driven, cultural-semiotic, or another research-grounded approach
-6. Design Tokens (read `references/visual-tokens.md`)
-7. Component Mapping (read `references/component-recipe.md`)
-8. Motion & Behavior (read `references/motion-system.md`)
-9. Layout Requirements
-10. Design Specs Output
-
-## Agent Usage Context
-
-This skill is shared across multiple agents with different entry points:
-
-- **design-dna** (streaming, no handoff): Receives a confirmed direction from upstream. **Skips Style Direction Confirmation entirely** -- starts from Step 4 (Design Tokens) onward. Uses reference files for token structure, component recipes, motion specs, and quality gate.
-
-When this skill is activated by `design-dna`, the agent should ignore the Style Direction Confirmation section and begin from Design Tokens using the confirmed direction provided in its `contextSummary`.
-
-## General Skill Mode Override
-
-When the caller asks for advisory critique, reference adaptation, refinement, or a caller-shaped handoff, treat the mandatory option menu / wait gate / blockquote template in Style Direction Confirmation as optional methodology scaffolding rather than an output contract.
-
-In General Skill Mode:
-- The caller's requested shape or schema wins.
-- Do not force A/B/C, blockquotes, exact field labels, or confirmation questions.
-- Provide one decisive direction when the caller asks for one.
-- Compare 2-3 directions only when alternatives help the decision.
-- Still preserve the quality bar: anti-pattern avoidance, register fidelity, IA coupling, palette diversity, interaction states, and accessibility.
-
-## Step 0: Product Type Assessment (Before Any Design)
-
-Determine which track to follow based on the product's core value proposition:
-
-**Convention Track** — when product value is in **utility**, not visual experience:
-- SaaS dashboards, B2B back-offices, developer tools, productivity/efficiency tools, simple utility web apps
-- Users expect **clarity, predictability, and low cognitive load**; novel visual language adds friction, not value
-- Adopt one proven design language directly. The reference pool is wide and there is **no fixed shortlist** — pick the system that best matches THIS product. Candidates include (any one of, rotate across mentions, do NOT lock to the first 2-3 names): Notion, Spotify, Arc, Things 3, Figma, Airbnb, Craft, Telegram, Duolingo, Raycast, Bear, Superhuman, GitHub, Todoist, Linear, Stripe, Vercel, Apple HIG, Google Material 3. Do NOT default to "Linear/Stripe/Vercel" just because they appear together in legacy examples.
-- After Inspiration Research (Step 1) and Style Direction Confirmation, skip Insight Discovery and brand-methodology steps
-
-**Innovation Track** — when product value depends on **brand experience and emotional differentiation**:
-- Consumer social, branded e-commerce, lifestyle, creative tools, entertainment
-- Visual identity IS the product advantage; generic design is a competitive risk
-- Follow the brand-driven methodology path (see Step 3) — Material Metaphor is one well-documented option, but archetype-driven, narrative-driven, and cultural-semiotic approaches are equally valid when the brand calls for them
-
-**If uncertain**, default to Convention Track — over-designing a utility product is a worse outcome than under-designing a brand product.
-
-**CRITICAL — Both tracks require user confirmation:** You MUST present 2-3 distinct visual direction options and wait for user selection before proceeding with design tokens or component work. See Style Direction Confirmation section below.
+Load these on demand:
+- `references/visual-tokens.md`
+- `references/component-recipe.md`
+- `references/motion-system.md`
+- `references/material-metaphor.md`
+- `references/design-audit.md`
+- `references/icon-guidelines.md`
+- `references/component-libraries.md` — native platform components and system patterns
+- `references/hero-enrichment.md` — native visual-enrichment patterns for high-value surfaces
 
 ---
 
-## Step 1: Inspiration Research (MANDATORY)
+# Workflow
 
-### Standard Research (no user reference)
-You MUST use `websearch` to find 3-5 high-quality design references. Do not use generic photo search as a shortcut for design direction; Unsplash-style sources are valid later for real photographic assets, not as the only style research.
+## Step 0: Product + Platform Assessment
 
-**Search**: "best [industry] app design 2026" + "site:mobbin.com OR site:uinotes.com OR site:dribbble.com OR site:behance.net"
+Identify:
 
-**Target Sources**: Mobbin (real products), UINotes (curated UI), Dribbble (concepts), Behance (case studies), Awwwards, and industry leaders relevant to THIS product (rotate across the candidate pool listed in Step 0 — do not default to the same 2-3 names every time)
+1. **Target platform**
+   - iPhone/iPad
+   - Android phone/tablet/foldable
+   - Both
 
-### Reference-Informed Research (user provided reference image/URL/Figma)
-When the user provided a visual reference for a new product (Scenario A-Ref):
-- **Analyze the user's reference FIRST** — this is the primary calibration source. If it's a URL, use `firecrawl_scrape` with the correct format: for design platforms (Dribbble/Behance/Mobbin/UINotes) use `formats: ["images"]` to extract actual design artwork; for product official websites use `formats: ["screenshot"]` (optionally add `"branding"` for color/typography data). Do NOT use `screenshot` format on design platform pages — a webpage screenshot captures page chrome, not the design reference. If it's a screenshot/image, analyze visual characteristics directly: dominant colors, typography feel, spacing density, card style, light/dark mode, overall mood.
-- Optionally supplement with 1-2 `websearch` results to identify what design tradition the reference belongs to. Use real-photo sources only when the product needs photographic content assets.
-- The reference analysis directly informs the direction options (see Style Direction Confirmation below).
+2. **Implementation target if known**
+   - iOS: SwiftUI / UIKit / mixed
+   - Android: Jetpack Compose / Views/XML / mixed
+   - Treat this as implementation context, not visual direction.
 
-### Common rules (both modes)
-**Research only — internal use:** Use `websearch` and optionally `firecrawl_scrape` for internal style calibration. All fetched images are for internal analysis only — **never output any image to the user during Inspiration Research or direction option steps.**
+3. **Product value**
+   - Utility/efficiency → Convention Track usually fits.
+   - Brand/emotional differentiation → Innovation Track usually fits.
 
-**Real image requirement:** Once implementation/specification reaches actual screens, any image slot must name or use a concrete asset type tied to the product domain: real product photos, venue/food/travel photos, real UI screenshots, user-uploaded media, realistic avatars, album art, listing thumbnails, maps, or generated bitmap imagery that depicts the subject. Valid acquisition paths include user-provided assets, official product/media pages, `websearch`/image search, Dribbble/Behance/Mobbin/UINotes for design artwork, Unsplash/Pexels/Wikimedia-style sources for real photography, and generated bitmap images when no suitable real asset exists. If no credible image is available, redesign the layout so it does not depend on imagery. Do NOT ship decorative placeholders.
+4. **Usage characteristics**
+   - high-frequency vs occasional
+   - one-handed vs two-handed
+   - content-heavy vs action-heavy
+   - creation vs consumption
+   - novice vs expert
+   - phone-only vs adaptive tablet/large-screen use
 
-**Output**: Use internal research conclusions to ground direction options. Direction options must be presented as plain text only.
+5. **Accessibility and system constraints**
+   - text scaling
+   - screen reader
+   - reduced motion
+   - localization / RTL
+   - safe areas / display cutouts
+   - keyboard and pointer if relevant
+   - offline/loading/error states if relevant
 
-## Style Direction Confirmation (MANDATORY — Both Tracks)
+### Convention Track
 
-Present **2-3 distinct visual direction options** to the user. **Do NOT proceed until the user selects one.**
+Use when product value is primarily utility:
+- productivity
+- settings
+- personal data
+- finance utility
+- developer/admin tools
+- record keeping
+- task-oriented workflows
 
-**When**: Convention Track (after Inspiration Research), Innovation Track (after Insight Discovery)
+Adopt familiar platform patterns and learn from strong native products. "Conventional" does not mean visually generic; it means interaction behavior should be predictable.
 
-**HARD RULE — NO IMAGES IN OPTIONS:** Do NOT fetch, load, or embed any image during direction option presentation. Options are plain text only — direction name + keywords. This rule has no exceptions.
+### Innovation Track
 
-**Output format**: All direction options MUST be wrapped in a single markdown blockquote (`>` prefix) with a bold title `> **视觉方向**`. The confirmation question goes OUTSIDE the blockquote.
+Use when visual identity materially contributes to product value:
+- lifestyle
+- social
+- consumer brand
+- creative tools
+- entertainment
+- culture/media
+- highly expressive content products
 
-**Prescriptive template**:
-```
-> **视觉方向**
->
-> A: {Direction name}
-> - Feel: {metaphor, ≤ 10 words}
-> - Color: {color names, ≤ 6 words}
-> - Texture: {1-2 tactile words}
-> - Motion: {action phrase, ≤ 8 words}
-> - Layout: {layout philosophy in one short phrase, e.g. "single-column immersive scroll" / "split-pane utility grid" / "floating cards with gestures"}
-> - Pages: {3-5 page names with brief shape hints, e.g. "Home (single-flow feed) · Detail (immersive) · Profile (sparse)"}
->
-> B: {Direction name}
-> - Feel: ...
-> - Color: ...
-> - Texture: ...
-> - Motion: ...
-> - Layout: ...
-> - Pages: ...
+Keep native behavioral anchors while developing a stronger branded visual system.
 
-{confirmation question, e.g., "喜欢哪个方向？"}
-```
-
-**Card preparation (REQUIRED before generating the cards)**: For each direction, silently prepare the dense design decisions behind the visible card — what it feels like to use, what surfaces it evokes, what physical or emotional reference it draws from, how the IA / pages would actually flow, what kind of user it courts. This preparation must not appear in user-facing output, tool results, headings, or scratch prose. Distill the visible cards from that preparation. The preparation is the seed; the card is the harvest. Without it, the cards become 30-word stubs that produce flat downstream output.
-
-**Convention Track options**: Name the reference system (e.g., "Notion-style", "Spotify-style"). Pick from the wide candidate pool in Step 0 — rotate across mentions, do not lock to any single trio. Include color tone, border radius, density, feel. Options must be meaningfully different across multiple axes (not three close cousins of the same system).
-
-**Innovation Track options**: Name the creative direction. The naming pattern is methodology-flexible — Material Metaphor uses "{material} x {environment}" (e.g., "Liquid Metal x Nordic Winter"); archetype-driven uses a character name; narrative-driven uses a scene phrase; cultural-semiotic uses a movement reference. Include Feel/Color/Texture/Motion/Layout/Pages keywords. Options should represent genuinely different aesthetic directions, not three flavors of one methodology.
-
-**Reference-informed options** (Scenario A-Ref): Options must be **anchored to the user's reference**. At least one option should stay close to the reference's visual style (e.g., "贴近参考" / "Reference-Faithful"). Other options should offer deliberate variations — modernize, warm up, simplify, or add personality — while still using the reference as the starting point. Do NOT propose options that completely ignore the reference.
-
-**Direction diversity requirement (CRITICAL)**: each direction must have its own **color identity and emotional character** — this is the PRIMARY differentiator. Directions should feel like completely different visual worlds, not lightness variants of the same palette. Anti-pattern (the #1 failure mode): organizing directions along the lightness axis — "one bright, one dark, one warm." Lightness follows from the color identity, not the other way around. Good differentiators: different accent hue families (coral vs emerald vs gold), different emotional registers (playful vs precise vs poetic), different material/texture feels (glossy metal vs raw ceramic vs crisp paper). If you catch yourself generating lightness variants instead of genuinely different color identities, start over.
-
-**Diversity enforcement (HARD constraint)**: before emitting cards, silently classify each direction along `Layout Vibe` (EDITORIAL | UTILITY | [HYBRID]), `Corner Philosophy` (SHARP | SOFT | [SPATIAL]), `Accent Temperature` (WARM | COOL | [NEUTRAL] | CHROMATIC), and `Depth Strategy` (FLAT | [LAYERED] | IMMERSIVE). Then verify: (1) any two directions differ on ≥ 3 of the dimensions; (2) at least one direction is a pure-extreme combination (no bracketed values); (3) no bracketed middle value appears in more than one direction. These classifications are not user-facing card content and must never be printed as headings, checklists, tables, raw enum strings, or verification notes.
-
-**Register constraint (overrides diversity)**: also track the derived register dials (`Energy`, `Finish`, `Density`, `Weight`, `Seriousness`) per direction. When the evidence locks a register region, all options stay inside it — a rock-venue brief gets 2-3 loud/raw directions that differ in layout, color identity, and depth, never one loud option "balanced" by polished-minimal alternatives. Register diversity across options is allowed only when the evidence is genuinely ambiguous.
-
-**IA-Visual Coupling (CRITICAL)**: each direction commits to an information architecture and layout philosophy that belong to its visual world — not just colors on top of a generic page list. Different directions imply different Pages and Layouts (an editorial direction may collapse navigation into a single-column scroll; a utility direction may split into nav + content + detail panes). Anti-pattern: three directions sharing the same Pages and Layout values, differing only in color and texture. The `Pages` and `Layout` fields are also the seed for the downstream wireframe — they are not decorative.
-
-**Navigation shell selection (mobile/app — CRITICAL)**: when the platform is mobile/app, each direction must declare its **navigation shell** — `TabBar` (3-5 peer destinations) / `Stack` (drill-in) / `Hub` (launcher of tiles) / `Single-view` (one focused surface + sheets) / `Feed` (full-screen gesture cards) — coherent with its Layout Vibe and the product's real flow. Do NOT default every app to a bottom TabBar; a 5-tab bar is earned only by 3-5 genuinely peer destinations. See `write-mobile` "Navigation Shell Decision" for the implementation recipes. Across the 2-3 proposed directions the shell SHOULD vary where the product reasonably supports it.
-
-**Mobile/App Structural Lens (APP/Mobile)**: alongside the navigation shell, decide which moments carry visual expression and which routine controls should stay quiet — keep concrete evidence such as player controls, feed rhythm, canvas edge tools, catalog comparison, or tactile media surfaces if the concept depends on them. This is a design lens, not a mandatory output schema: mention only compact, user-useful hints in Layout, Pages, or Motion. Do not print internal UI-language taxonomies, four-pillar schemas, fixed field names, or long implementation contracts.
-
-**Wait for user selection before continuing.**
+If uncertain, default to Convention Track for interaction architecture, then add brand expression selectively.
 
 ---
 
-## Step 2: Insight Discovery (Brand-First, NOT Industry-First) — Innovation Track Only
+## Step 1: Information Architecture Skeleton
 
-**Convention Track: skip this step. Your visual direction comes from the established design system selected in Style Direction Confirmation.**
+Before styling, define the smallest useful navigation model.
 
-**WARNING: Avoid industry stereotypes from the start.**
+### iOS / iPadOS
+Consider:
+- tab bar for a small set of peer top-level destinations
+- navigation stack for drill-down hierarchy
+- sheets for focused modal tasks
+- popovers where context and device class make them appropriate
+- sidebars / split views for iPad and larger windows
+- search as part of native navigation/search patterns
+- toolbar actions close to the content they affect
 
-Before any visual decisions, deeply understand:
+Respect system back/navigation expectations. Do not invent a custom back model merely for visual novelty.
 
-1. **What is the BRAND personality?** (NOT the industry category)
-2. **What emotional response should users feel?** (NOT what they "expect")
-3. **How is this DIFFERENT from competitors?** (NOT how it's similar)
-4. **Who is the target user?** (Be specific: age, lifestyle, values)
+### Android
+Consider:
+- navigation bar for 3–5 peer top-level destinations on compact widths
+- navigation rail for larger widths when appropriate
+- navigation drawer when the information architecture genuinely needs more destinations
+- top app bar, FAB, menus, sheets, and dialogs according to task priority
+- system back behavior and predictive-back expectations
+- adaptive layouts rather than stretching phone layouts across large screens
 
-**Output:** 3-5 Feeling Keywords in the user's language.
+### Shared rules
+- A navigation control is for **destinations**, not arbitrary actions.
+- Do not create a bottom tab for every feature.
+- Do not hide frequent core actions inside overflow menus.
+- Do not use gesture-only discovery for critical actions.
+- Keep primary actions reachable and close to the content they affect.
+- On larger screens, reorganize into panes/sidebars/rails when appropriate; do not simply scale everything up.
 
-**Lazy Examples (AVOID):**
-- Food app: "Delicious", "Warm", "Appetizing" — Too obvious, leads to Orange palette
-- Pet app: "Cute", "Fun", "Lively" — Too generic, leads to cliche design
-
-**Brand-First Examples** (keywords may land anywhere on the register dials — soft, harsh, cheap, loud, and institutional feelings are all valid raw material):
-- Premium pet nutrition brand: "Scientific", "Precise", "Health Guardian" — Minimal white, clean typography
-- Late-night comfort food delivery: "Healing", "Solitude", "Gentle" — Warm neutrals, soft shadows
-- Gen-Z finance app: "Fearless", "Playful", "Control" — Bold colors, casual voice
-- Underground live-music community: "Distortion", "Sweat", "Cut-and-paste" — Halftone grain, hard borders, collage stacking
-- Civic services portal: "Certainty", "Zero decoration", "Procedural calm" — Daylight neutrals, rigid grid, quiet motion
-
----
-
-## Step 3: Brand-Driven Methodology — Innovation Track Only
-
-**Convention Track: skip this step.**
-
-Pick ONE methodology that fits the brand from Step 2's feeling keywords. Material Metaphor is one well-documented path; it is NOT the only valid Innovation Track approach. Treat the choice of methodology as itself a design decision driven by the brand, not a default.
-
-**Methodology options:**
-
-- **Material Metaphor** — translate brand feeling into a physical material + environmental setting, then derive visual physics (lighting / depth / edge treatment) from those choices. Best fit: products where tactile premium feel is a core differentiator. **Read `references/material-metaphor.md` for the complete methodology.**
-- **Archetype-driven** — anchor the design to a character archetype (the Magician, the Outlaw, the Caregiver, the Explorer, etc.) and let archetype semantics drive color / typography / motion choices. Best fit: lifestyle, branded entertainment, products with strong narrative voice.
-- **Narrative-driven** — design around one concrete scene the user is imagined to occupy (e.g., "a late-night kitchen on a rainy weekday"). Visual properties resolve from the scene's light, sound, materials, and emotional register. Best fit: emotional-utility products (journaling, recovery, mindfulness).
-- **Cultural-semiotic** — root the visual language in a specific movement or cultural reference (Bauhaus, Japanese minimalism, Memphis, brutalist editorial, etc.) and translate its grammar into the product. Best fit: products targeting culturally literate audiences where the reference is the differentiator.
-
-Other methodologies are acceptable when grounded in research. The four above are starting templates, not an exhaustive menu.
-
-**This is an internal decision step — do NOT present methodology sub-options to the user. Do NOT ask for further selection. Choose the methodology yourself based on the feeling keywords and proceed directly.**
-
-**Methodology Brief Deliverable** (output structure varies by methodology; for Material Metaphor specifically):
-- **Base Material** (e.g., Glass, Paper, Liquid Metal, Fabric, or invent your own)
-- **Environmental Setting** (e.g., California beach, Nordic winter, Warm library, or invent your own)
-- **Physics Rules** derived from the material:
-  - Lighting Logic (point light, ambient/diffused, inner glow, no shadow)
-  - Depth Expression (drop shadow, blur, opacity layers, border only)
-  - Edge Treatment (sharp 0px, subtle 4-8px, soft 12-20px, full round 50%)
-
-For other methodologies, the Brief carries equivalent fields adapted to that methodology's vocabulary (archetype name + archetype's signature visual properties; scene + scene-derived properties; cultural movement + movement-derived properties).
-
-**Anti-anchor**: do NOT default to "Brushed Steel x Nordic Winter" or any other recurring material/environment pairing. The reference file's tables are starting points, NOT a selection menu. Invent new materials/environments specific to the brand when the listed ones don't fit.
+This step defines structure only. Do not lock visual styling yet.
 
 ---
 
-## Step 4: Design Tokens
+## Step 2: Inspiration Research — Mandatory for substantial design work
 
-**Read `references/visual-tokens.md` for complete token structure.**
+Research 3–5 high-quality references.
 
-**Key categories**: Color Roles (Primary 8-12% surface, Secondary, Background, Surface, Text, Semantic), Typography (Display, Title, Body, Caption, Label), Spacing (4px/8px base), Shadows (1-5 levels)
+Priority:
+1. User-provided screenshots, Figma, existing product, or URL
+2. Current Apple/Android platform guidance for behavior
+3. Real shipped native apps in the same task family
+4. App Store / Google Play screenshots and official product media
+5. Curated UI sources such as Mobbin / UI Notes
+6. Dribbble / Behance concepts only as visual inspiration, never as proof of usable native behavior
 
-**Reference Images as Palette Source**: Extract and adapt color schemes from reference images. User-provided references take priority.
+Research questions:
+- What navigation model is common, and why?
+- Which controls are platform-standard vs custom?
+- Where is brand identity expressed?
+- What information hierarchy survives across text sizes and devices?
+- How are loading, empty, error, offline, permissions, and destructive actions handled?
+- Which patterns are current vs merely fashionable?
+- What should **not** be copied?
 
-**Image Asset Rules**: Define whether each meaningful image comes from user-provided assets, official/source-owned assets, websearch/image search, Dribbble/Behance-style design artwork, Unsplash/Pexels/Wikimedia-style real photography, product screenshots, generated bitmap assets, or user/content data. Images must reveal the actual subject and support the product's information architecture; they are content, not decoration. Avoid dark blurred stock backgrounds, abstract mesh placeholders, generic laptop mockups, and product cards with fake gray boxes.
+Do not clone a competitor pixel-for-pixel.
 
-**Color Depth Rules**:
-- Primary/Accent instantly recognizable, high contrast, logo-worthy
-- Background is atmosphere (use `#FAF8F5`, `#F5F5F7`, `#1A1A1B`, not pure black/white)
-- Surface layers use hue shift, not just brightness (depth through color temperature)
-- Avoid one-note palettes: the finished UI must not be dominated by a single dominant hue family or read as a preset theme. Beige/cream/sand/tan, dark blue/slate, and brown/orange/espresso are not banned; they fail only when used as unchallenged whole-interface defaults. If the product/reference earns that direction, add a counter-hue, neutral temperature shift, or material contrast before finalizing.
+When the user provides a visual reference, analyze it first:
+- palette and color roles
+- type character
+- density and rhythm
+- surface/depth model
+- icon treatment
+- image strategy
+- navigation shell
+- component geometry
+- motion character
+- which parts are brand identity vs platform behavior
 
-**Mobile App Color Operating Model (APP/Mobile)**:
-- Industry defaults are challenged, not banned. Food can use orange, finance can use blue, health can use blue-white, sleep can use purple/deep blue — but only after the brand, audience, and reference justify it. If the reason is "that industry uses this color," change it.
-- Fluorescent green, generic blue, and Claude orange are valid accent choices when used with restraint. They fail when they become repeated APP active/accent defaults. If you use one, derive the reason from brand/reference, tune saturation, pair it with a supporting hue, and do not repeat them by habit across unrelated products.
-- Use 60/30/10 for APP screens: 60% base/background, 30% surface/supporting color, 10% accent/interactive emphasis. The accent can appear as small tonal surfaces, icons, progress, and selected states — not as a neon wash.
-- Apply a saturation budget: base low chroma, supporting color low-to-medium chroma, accent medium chroma, high saturation reserved for peak moments such as success, rewards, or urgent status.
-- Tonal active states must use color + shape/weight/indicator, not hue alone: selected tabs can combine an 8-12% tint pill, icon/label weight shift, and a small indicator instead of a bright active icon.
-
-**Texture & Depth ("Secret Sauce")**: Noise/Grain overlays, Glass/Blur (`backdrop-blur`), Inner Shadows, Subtle Gradients, 1px borders with opacity
-
-**Micro-Detail Finishing (Innovation Track)** — pick the vocabulary that matches the derived `Finish` dial:
-- *Polished register*: Surface Luster (highlight reflections), Tactile Depth (multi-layer shadows), Ambient Warmth (5-10% cross-temperature color)
-- *Raw register*: Torn/Deckled Edges (irregular clip-path or mask borders), Overexposed Grain (heavy noise, blown highlights), Misregistered Overprint (offset color layers, halftone dots), Tape/Staple Artifacts (collage fixings), Photocopy Distortion (ink bleed, streaks)
-
-Convention Track derives equivalent finishing from reference system patterns.
-
----
-
-## Step 5: Component Recipes
-
-**Read `references/component-recipe.md` for 8-state interaction model and Tailwind class composition.**
-
-**CRITICAL:** Define components as **atomic Tailwind class strings**, not text descriptions.
-
-**Convention Track**: Replicate reference system patterns faithfully (border radius, shadow depth, color usage, hover states).
-
-**Innovation Track**: Translate Feeling Keywords and the chosen methodology brief (Material Metaphor / archetype / narrative / cultural-semiotic) into visual code. How does the methodology's core abstraction affect `shadow`/`border`/`bg`/`ring`? Capture the vibe in the code.
-
-**8-State Model**: Default, Hover, Active, Focus, Disabled, Loading, Success, Error. Account for all relevant states.
-
-**Required Output**: Tailwind classes for Container/Card, Primary Button, Input Field, Navigation Item, Badge/Tag.
-
-See `references/component-recipe.md` for detailed examples.
+Use whatever research tools are available. No paid MCP or scraping service is required by this skill.
 
 ---
 
-## Step 6: Motion & Behavior
+## Step 3: Style Direction Confirmation
 
-**Read `references/motion-system.md` for complete motion system.**
+For exploratory design, present 2–3 genuinely distinct directions **within the derived register**.
 
-**Motion Purpose Test**: Does this animation serve Feedback, Guidance, Continuity, or Brand Expression? If no, remove it.
+Each direction should cover:
+- Feel
+- Color identity
+- Typography strategy
+- Surface/material treatment
+- Density and spacing rhythm
+- Imagery/illustration strategy
+- Icon character
+- Navigation-shell treatment
+- Motion character
+- Platform fit: how it remains native on iOS and/or Android
 
-**Worth-It Test**: "Would you spend a week hand-coding this? If no, don't include it."
+Directions must differ in design logic, not just hue.
 
-**Friction/Damping**:
-- Convention Track: standard easing (ease-out for entrances, ease-in for exits)
-- Innovation Track: derive from the chosen methodology. For Material Metaphor, friction maps from the base material (Glass/Metal = low friction, Paper/Fabric = medium, Water/Mist = high damping). For archetype-driven, friction maps from the archetype's energy register. For narrative-driven, friction maps from the scene's pace. For cultural-semiotic, friction follows the movement's motion vocabulary.
+Bad:
+- A = blue
+- B = green
+- C = purple
 
-**Spring Physics Over Fixed Curves**: Button Press (`scale: 0.98`, `stiffness: 400`, `damping: 10`), Modal Open (`y: 0`, `opacity: 1`, `stiffness: 250`, `damping: 25`), Hover (`y: -2`, `stiffness: 300`, `damping: 15`)
+Good:
+- Direction A: quiet editorial, type-led, restrained surfaces, content-first
+- Direction B: tactile object-like, stronger depth, compact controls, physical motion
+- Direction C: graphic/poster-led, bold image cropping, hard edges, abrupt motion
 
-**Motion Character (register-driven)**: Tactile button feedback (`active:scale-[0.98]`), staggered delays (30-50ms). Quiet/polished registers use ease-out/spring physics; loud/raw registers may use hard cuts, linear snaps (80-150ms), and stepped/frame-skip reveals as deliberate brand expression. What is banned is unconsidered default easing, not any specific curve.
-
-See `references/motion-system.md` for complete specifications.
-
----
-
-## Step 7: Layout Requirements
-
-**Grid System**: 12-column or 8pt spacing system. All components, gutters, margins multiples of 8px. In dense-poster register, deliberate off-grid rotation/overlap is allowed on top of a rigid underlying grid (see structural collision safety rules in `references/anti-patterns.md`).
-
-**Device Adaptability**: Flexible grids and breakpoints for all screen sizes (desktop, tablet, mobile).
-
-**Modular Construction**: Organize functional blocks into distinct modules. Column-based layouts for visual balance.
-
-**Density & Rhythm (take the tier from the derived `Density` dial — no global default)**:
-
-| Tier | Macro spacing (between sections) | Micro padding | Character |
-|---|---|---|---|
-| Sparse (editorial/archival) | 64-120px | Generous; content never touches borders | Whitespace guides focus to primary CTA/key data |
-| Standard (utility/consumer) | 32-64px | Comfortable; 16-24px internal padding | Balanced scanning rhythm |
-| Dense (poster/feed/workbench) | 8-32px, intentional collisions allowed | Tight; edge-to-edge bleeds and overlaps allowed | Energy through stacking; hierarchy via scale/weight/color instead of distance |
-
-Whichever tier applies, rhythm must be deliberate: dense means controlled collision with clear reading order, not accidental clutter; sparse means active whitespace, not emptiness.
+If the caller asks for one decisive direction, provide one. The confirmation menu is methodology scaffolding, not an inflexible output contract.
 
 ---
 
-## Step 8: Design Specs Output
+## Step 4: Brand Methodology — Innovation Track only
 
-Produce complete specification:
-1. Design Principles and Layout Requirements
-2. Color Palette (hex codes + usage rules)
-3. Typography System (families, sizes, weights, line heights)
-4. Spacing Scale
-5. Component Specifications (all states, Tailwind classes)
-6. Animation Guidelines (spring physics parameters)
-7. Real Image / Asset Requirements (source type, subject, crop, alt text, fallback behavior)
-8. Icon Guidelines (same library, same style, same stroke weight 1.5-2px, 24x24 grid)
-9. Recommended Libraries
+Choose the method that best explains the brand:
+- Material Metaphor
+- archetype-driven
+- narrative-driven
+- cultural-semiotic
+- another research-grounded method
 
-**Quality Gate**: Before delivery, read `references/design-audit.md` and apply all quality checks. Address issues before presenting to user.
+If using Material Metaphor, read `references/material-metaphor.md`.
 
-## Post-Completion: What Happens After `generate_visual_dna`
-
-**This section applies to the main agent's orchestration context only.** The `design-dna` sub-agent does not own the post-DNA flow -- it returns to the caller after `generate_visual_dna` completes.
-
-**Main agent rule — do NOT ask for confirmation after visual DNA generation.** The post-visual-DNA flow is **non-interactive**: the main agent tells the user the visual specs are set and immediately proceeds to call `save_final_prd` (PRD) first, then `write_code(initial_single_page)` (preview page) — in that order, same turn, no text output between the two calls. Do NOT output a question like "需要先出一个核心页面看看整体感觉吗？" or "产品简报已保存...要继续吗？" — both calls are mandatory and uninterruptible.
+Do not turn metaphor into decoration. A "paper" metaphor does not require fake paper cards everywhere; it may instead influence edge treatment, layering, transition behavior, imagery, and tactile feedback.
 
 ---
 
-## Style Guardrails (Global)
+## Step 5: Design Tokens
 
-**Read `references/anti-patterns.md` (MANDATORY) for complete list.**
+Read `references/visual-tokens.md`.
 
-### Hard Bans (Both Tracks)
+Define **semantic design intent first**, then map it to each platform.
 
-**Banned combination patterns** (not individual colors — see `anti-patterns.md` for full list):
-- Purple-blue, pink-cyan, or rainbow gradients (STRICTLY BANNED as AI-slop triggers)
-- Unintentional, chaotic use of multiple high-saturation accents
-- One-note palettes where background, surfaces, accent, and illustration all sit in the same dominant hue family. This includes default beige/cream/sand/tan lifestyle themes, dark blue/slate SaaS themes, and brown/orange/espresso coffee themes when not specifically justified by the brand or reference; those families are usable when intentionally composed, not banned as colors.
+Required token domains:
+- semantic color roles
+- typography roles
+- spacing rhythm
+- corner geometry
+- stroke/separator treatment
+- depth/elevation
+- opacity
+- imagery treatment
+- motion roles
+- optional material/texture roles
 
-**Dark Mode Backgrounds**: any dark background without purple tint (hue 260-300, saturation > 10%). Vary color temperature — neutral, warm, cool, or tinted darks are all acceptable. **Pure black (#000000)** is allowed for modern genres like Neo-brutalism or Spatial UI.
+### Native typography rule
+System typography is the default baseline, especially for body/UI text.
 
-**Do NOT use default Tailwind color names** — specify exact hex codes.
+Custom fonts are allowed when brand value justifies them, but they must:
+- remain legible at small sizes
+- support required scripts/weights
+- scale with accessibility text settings
+- not break truncation or layout
+- not turn every UI label into branding
 
-**Unearned Register Default**: skipping evidence-based register derivation in either direction — defaulting to quiet-polished minimalism for a loud/raw brief, or forcing grit onto a product whose evidence says quiet. Quiet/polished with cited evidence is fully legitimate. See `anti-patterns.md` § Unearned Register Default.
+A strong pattern is often:
+- brand/custom type for selected display/title moments
+- system/platform type for dense UI and body text
 
-**Quality Standards**: Icons (same library, same style, same stroke weight 1.5-2px, 24x24 grid), Contrast (text/background >= 4.5:1), Body text (>= 14sp), Brand color (8-12% surface, EXEMPT: >30% allowed in Neo-brutalism/Marketing)
+Never ban SF Pro, San Francisco system typography, Roboto, or platform defaults merely for being common. Familiarity and legibility are strengths in native UI.
 
-**Real Image Standard**: If the UI shows imagery, it must be real or credibly subject-specific. Product, listing, venue, food, travel, profile, media, portfolio, and hero imagery must depict the actual object/state/person/place/category being represented. Use purposeful crops, visible focal points, and alt text. If credible imagery cannot be sourced or generated, remove the image slot instead of filling it with placeholder art.
+### Color rule
+Use semantic roles rather than hardcoded color names:
+- accent/action
+- primary/secondary text
+- background/surface
+- separator
+- destructive
+- warning
+- success
+- informational
+- selection
+- disabled
 
-### Soft Guidelines (Both Tracks)
-
-Acceptable when serving visual direction: Subtle gradients (backgrounds, not buttons), Glassmorphism (when reinforcing Material Metaphor), Bold saturated accents (not neon). Any hue is acceptable as accent as long as it does not form a banned combination pattern.
-
-### Industry Color Defaults (Both Tracks)
-
-Industry defaults are challenged, not banned. Food=orange, tech=blue, eco=green, finance=blue/green, health=blue-white, and sleep=purple/deep blue are valid when they genuinely serve THIS product's brand. If you chose the hue because "that's what this industry does," find something better.
-
-### Mobile App Color Operating Model (APP/Mobile)
-
-On app screens, avoid AI slop active/accent defaults: fluorescent green, generic blue, and Claude orange are valid accent choices when used with restraint, but must not become the automatic selected tab, primary CTA, or progress color. Use the 60/30/10 distribution and a saturation budget instead: quiet base, distinct supporting hue, restrained accent, and high saturation only for peak feedback. Tonal active states should combine color + shape/weight/indicator so selection is readable without turning the app into a neon theme, and do not repeat them by habit across unrelated products.
-
-**Reference Product Pool** (study for the RANGE of valid approaches — order is intentionally varied, do NOT lock to the first 2-3 names): Notion, Spotify, Arc, Things 3, Figma, Airbnb, Craft, Stripe, Telegram, Duolingo, Linear, Raycast, Bear, Superhuman, Vercel, Apple, GitHub, Todoist. When picking a reference for a given product, pick the one that genuinely fits the brief — do not default to whichever name comes first.
+Support light/dark appearance and increased-contrast needs. Do not rely on color alone to communicate state.
 
 ---
+
+## Step 6: Native Component Recipes
+
+Read `references/component-recipe.md`.
+
+For every important interactive component, specify:
+
+1. **Role and purpose**
+2. **Platform primitive**
+   - iOS: standard control/pattern when suitable
+   - Android: Material/system control/pattern when suitable
+3. **Visual anatomy**
+4. **State model**
+5. **Touch target**
+6. **Content behavior**
+7. **Accessibility semantics**
+8. **Motion/haptics**
+9. **Platform differences**
+10. **Custom treatment justification**, if deviating from a native primitive
+
+### Core state model
+
+Account for relevant states:
+- Default
+- Pressed / active
+- Focused — when keyboard/pointer focus exists
+- Selected / checked
+- Disabled
+- Loading / progress
+- Error
+- Success / completion
+
+Optional input-specific states:
+- Hover — iPad pointer, Android pointer/desktop contexts only
+- Long-press / context-menu affordance
+- Dragging / swiping / reordering
+- Expanded / collapsed
+
+Do not make Hover a mandatory mobile state.
+
+### Touch targets
+- iOS/iPadOS: design ordinary touch controls around the platform-recommended 44×44 pt hit region; smaller visible glyphs can sit inside a larger hit target.
+- Android: target at least 48×48 dp for touch interactions.
+- Do not shrink hit targets to satisfy a visual grid.
+
+### Native controls first
+Prefer system/native components for common behavior:
+- buttons
+- text fields
+- toggles/switches
+- menus
+- lists
+- navigation
+- sheets/dialogs
+- pickers
+- date/time selection
+- search
+- progress
+- share/activity surfaces
+
+Custom controls are justified when the domain interaction itself is custom or when brand value outweighs the loss of familiar behavior. When custom, reproduce accessibility, state, and input behavior — not just appearance.
+
+---
+
+## Step 7: Layout + Adaptivity
+
+### Units
+- iOS design specs: use points (pt)
+- Android design specs: use density-independent pixels (dp); text follows scalable typography conventions
+- Product-level token names may be platform-neutral, but final platform specs must resolve to platform units.
+
+### Safe areas and system UI
+Never draw fake OS chrome into the product UI.
+
+Design around:
+- status bars
+- Dynamic Island / camera cutouts
+- home indicator / gesture navigation
+- Android system bars
+- display cutouts
+- software keyboard / IME
+- iPad multitasking and resizable windows
+- Android window size classes, foldables, multi-window, desktop windowing where relevant
+
+Use edge-to-edge intentionally. Content may extend beneath system bars while interactive content respects safe/inset regions.
+
+### Adaptivity
+Do not treat "responsive" as web breakpoints.
+
+Instead specify behavior changes:
+- one column → list/detail
+- bottom navigation → navigation rail
+- modal sheet → side sheet / popover
+- compact toolbar → expanded toolbar
+- single pane → multi-pane
+- edge-to-edge media → constrained readable content
+
+Set sensible maximum widths for reading/forms on large screens. Do not stretch phone controls to fill tablet width.
+
+### Density tiers
+Derive from the register:
+
+| Tier | Character | Native interpretation |
+|---|---|---|
+| Sparse | calm, editorial | larger grouping gaps, strong focus, fewer simultaneous actions |
+| Standard | balanced utility | familiar platform rhythm, comfortable grouping |
+| Dense | workbench/feed/poster | tighter grouping and more information, but touch targets and reading order remain clear |
+
+Dense does not mean cramped; sparse does not mean empty.
+
+---
+
+## Step 8: Motion + Feedback
+
+Read `references/motion-system.md`.
+
+Motion must serve one or more purposes:
+- Feedback
+- Guidance
+- Continuity
+- Brand expression
+
+Native rules:
+- Prefer system transitions for standard navigation and presentation.
+- Custom motion should not fight the directional logic of the platform.
+- High-frequency actions need brief, precise feedback.
+- Rare brand moments can be more expressive.
+- Haptics may reinforce meaningful feedback but must not become decorative noise.
+- Motion must remain interruptible where practical.
+- Respect iOS Reduce Motion and Android accessibility/user motion preferences where applicable.
+- Never make an animation the only carrier of important information.
+
+Do not impose one universal spring constant across SwiftUI, UIKit, Compose, and Views. Specify perceived behavior first — snappy, damped, heavy, elastic, abrupt — then map to the framework.
+
+---
+
+## Step 9: Accessibility + Internationalization
+
+Accessibility is part of the design spec.
+
+### iOS / iPadOS
+Account for:
+- Dynamic Type
+- VoiceOver
+- Bold Text / contrast preferences where relevant
+- Reduce Motion
+- Differentiate Without Color
+- Switch Control / alternative input
+- sufficiently sized controls
+- standard gestures with alternatives
+- localization and RTL
+
+### Android
+Account for:
+- font scaling
+- TalkBack
+- semantic roles / labels / state
+- Switch Access / Voice Access
+- minimum touch targets
+- color contrast
+- gesture alternatives
+- window/inset changes
+- localization and RTL
+
+### Shared
+- Never use color alone for status.
+- Decorative imagery should not receive noisy accessibility labels.
+- Useful imagery needs meaningful descriptions.
+- Destructive actions need clear consequences and appropriate confirmation/undo strategy.
+- Text layouts must survive localization expansion.
+- Do not clip essential content at larger text sizes.
+- Gesture-only actions need another discoverable route.
+
+---
+
+## Step 10: Design Specification Output
+
+A complete native design spec should include:
+
+### 1. Product register
+- five dial values with evidence
+
+### 2. Platform scope
+- iOS / Android / both
+- SwiftUI/UIKit/Compose/Views notes only where material
+
+### 3. Information architecture
+- destinations
+- hierarchy
+- modal flows
+- search
+- major actions
+- adaptive behavior
+
+### 4. Confirmed visual direction
+- visual thesis
+- color
+- typography
+- surfaces
+- imagery
+- icons
+- density
+- motion
+
+### 5. Semantic tokens
+- shared intent
+- iOS mapping
+- Android mapping when applicable
+
+### 6. Component specs
+For each important component:
+- anatomy
+- dimensions/rhythm
+- states
+- hit area
+- content rules
+- accessibility
+- motion/haptics
+- platform-specific differences
+
+### 7. Screen / layout specs
+- hierarchy
+- safe-area/inset behavior
+- scrolling
+- keyboard behavior
+- empty/loading/error/offline
+- compact vs expanded layout if relevant
+
+### 8. Motion spec
+- purpose
+- trigger
+- perceived physics
+- duration range if useful
+- reduced-motion behavior
+- platform mapping notes
+
+### 9. Accessibility verification
+- text scaling
+- screen reader semantics
+- contrast
+- touch size
+- gesture alternatives
+- localization/RTL
+
+### 10. Audit
+Read `references/design-audit.md` and run the native quality gate.
+
+---
+
+# Global Guardrails
+
+## Hard bans
+
+- No Tailwind/CSS class output as the primary design specification.
+- No DOM/ARIA rules used as substitutes for native accessibility semantics.
+- No mandatory hover states on touch-only flows.
+- No fake iOS/Android status bars, home indicators, gesture bars, Dynamic Island, phone bezels, or keyboards inside product UI.
+- No web breakpoint logic used as the native adaptive model.
+- No custom recreation of system sheets/dialogs/navigation solely to look "more designed."
+- No forced custom font merely to avoid system typography.
+- No one-to-one pixel cloning across iOS and Android.
+- No gesture-only critical actions.
+- No color-only state communication.
+- No decorative animation that blocks high-frequency work.
+- No automatic "modern app = purple/blue gradient + glass cards + giant rounded rectangles."
+- No arbitrary 3D/WebGL requirement for native app polish.
+- No hardcoded current-year assumptions in research queries; use the actual session date.
+
+## Soft guidelines
+
+- System components are a starting point, not a creativity ceiling.
+- Express brand more strongly in content and domain-specific components than in generic navigation chrome.
+- Custom components should inherit native behavior even when their visuals are distinctive.
+- Use haptics sparingly and intentionally.
+- Keep icon language coherent.
+- Preserve readable hierarchy under large text and localization.
+- Test both appearance modes where the product supports them.
+- Design empty, loading, permission, error, destructive, and offline states before calling a flow complete.
+
+---
+
+# Platform Mapping Principle
+
+The design spec should be understandable before any code is chosen.
+
+Example:
+
+**Design intent**
+- A compact secondary action appears inline with a card.
+- It has a 44/48-sized hit region, subtle press feedback, no independent container unless needed for contrast, an accessible label, and a contextual menu on long press where useful.
+
+**iOS**
+- Map to an appropriate SwiftUI `Button` / `Menu` or UIKit `UIButton` / `UIAction` / context-menu pattern.
+- Use SF Symbols when a suitable semantic symbol exists.
+- Preserve Dynamic Type and VoiceOver semantics.
+
+**Android**
+- Map to an appropriate Compose Material control or Views/Material Components equivalent.
+- Use Material Symbols or product icons consistent with the app.
+- Preserve TalkBack semantics and 48dp touch target.
+
+The implementation differs; the interaction intent does not.
+
+---
+
+# Quality Gate
+
+Before finalizing:
+
+- Does the app feel native without becoming generic?
+- Is brand expression strongest where it adds product value?
+- Does navigation follow platform mental models?
+- Are iOS and Android allowed to differ where they should?
+- Do custom controls preserve standard behavior and accessibility?
+- Do text scaling and localization survive the layout?
+- Are safe areas and system bars treated as real system constraints?
+- Are loading, empty, error, destructive, and offline states designed?
+- Does motion communicate rather than decorate?
+- Is the interface free of obvious AI-template signatures?
+- Could a developer implement the spec in SwiftUI, UIKit, Compose, or Views without reverse-engineering the intended behavior?
+
+If the last answer is no, the design spec is not complete.
